@@ -1,6 +1,8 @@
 'use client';
 
+import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
+import Layout from '../../components/layout';
 
 type Event = {
   time: string;
@@ -24,6 +26,7 @@ const getDaysInMonth = (month: number, year: number) => {
 const Calendar: React.FC = () => {
   const [month, setMonth] = useState<number>(new Date().getMonth() + 1); // 1-based month
   const [year, setYear] = useState<number>(new Date().getFullYear());
+  const pathname = usePathname();
 
   const handleMonthChange = (direction: 'prev' | 'next') => {
     if (direction === 'prev') {
@@ -38,31 +41,39 @@ const Calendar: React.FC = () => {
   const daysInMonth = getDaysInMonth(month, year);
 
   return (
-    <div style={styles.container}>
-      <div style={styles.header}>
-        <button onClick={() => handleMonthChange('prev')}>‹</button>
-        <span>{`${new Date(year, month - 1).toLocaleString('default', {
-          month: 'long',
-        })} ${year}`}</span>
-        <button onClick={() => handleMonthChange('next')}>›</button>
-      </div>
-      <div style={styles.list}>
-        {Array.from({ length: daysInMonth }, (_, i) => i + 1).map((day) => (
-          <div key={day} style={styles.dayRow}>
-            <div style={styles.dayNumber}>{day}</div>
-            <div style={styles.eventList}>
-              {mockEvents[day as keyof typeof mockEvents]?.map(
-                (event, index) => (
-                  <div key={index} style={styles.event}>
-                    {event.title} - {event.time}
+    <Layout>
+      <div className='flex'>
+        <main className='flex-1 p-4'>
+          <div style={styles.container}>
+            <div style={styles.header}>
+              <button onClick={() => handleMonthChange('prev')}>‹</button>
+              <span>{`${new Date(year, month - 1).toLocaleString('default', {
+                month: 'long',
+              })} ${year}`}</span>
+              <button onClick={() => handleMonthChange('next')}>›</button>
+            </div>
+            <div style={styles.list}>
+              {Array.from({ length: daysInMonth }, (_, i) => i + 1).map(
+                (day) => (
+                  <div key={day} style={styles.dayRow}>
+                    <div style={styles.dayNumber}>{day}</div>
+                    <div style={styles.eventList}>
+                      {mockEvents[day as keyof typeof mockEvents]?.map(
+                        (event, index) => (
+                          <div key={index} style={styles.event}>
+                            {event.title} - {event.time}
+                          </div>
+                        )
+                      )}
+                    </div>
                   </div>
                 )
               )}
             </div>
           </div>
-        ))}
+        </main>
       </div>
-    </div>
+    </Layout>
   );
 };
 

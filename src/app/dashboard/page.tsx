@@ -1,8 +1,11 @@
+// app/dashboard/page.tsx
+
 'use client';
 
-import { useAuth, UserButton } from '@clerk/nextjs';
+import { useAuth } from '@clerk/nextjs';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { Sidebar } from '../../components/sidebar';
 
 const DashboardPage: React.FC = () => {
   const { isLoaded, isSignedIn } = useAuth();
@@ -19,13 +22,11 @@ const DashboardPage: React.FC = () => {
   }
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>Welcome to your Dashboard</h1>
-      <UserButton />
-      <div style={{ marginTop: '20px' }}>
-        <a href='/calendar' style={{ textDecoration: 'none', color: 'blue' }}>
-          Go to Calendar
-        </a>
+    <div className='flex'>
+      <Sidebar />
+      <div className='flex-1 p-8'>
+        <h1>Welcome to your Dashboard</h1>
+        {/* Additional content goes here */}
       </div>
     </div>
   );
