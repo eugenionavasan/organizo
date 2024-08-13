@@ -1,4 +1,4 @@
-import { ClerkProvider, RedirectToSignIn } from '@clerk/nextjs';
+import { ClerkProvider } from '@clerk/nextjs';
 import { Inter } from 'next/font/google';
 import './globals.css';
 
