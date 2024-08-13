@@ -54,7 +54,7 @@ export const Pricing = () => {
   return (
     <section>
       <div className="container">
-        <h2>Pricing</h2>
+        <h2 className="section-title">Pricing</h2>
         <p>
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam
           dolorum, quas, quia, quidem voluptatem doloribus ex quos tempore
