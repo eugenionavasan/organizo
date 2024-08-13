@@ -27,7 +27,7 @@ const LoginPage: React.FC = () => {
       <SignIn
         path='/login'
         routing='path'
-        afterSignInUrl='/dashboard'
+        forceRedirectUrl='/dashboard'
         signUpUrl='/sign-up'
       />
     </div>

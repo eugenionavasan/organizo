@@ -49,7 +49,7 @@ const SignUpPage: React.FC = () => {
         path='/sign-up'
         routing='path'
         signInUrl='/login'
-        afterSignUpUrl='/verify-email-address'
+        forceRedirectUrl='/verify-email-address'
       />
     </div>
   );
