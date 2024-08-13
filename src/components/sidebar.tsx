@@ -79,15 +79,15 @@ export const Sidebar = () => {
             </Link>
           </li>
         </ul>
-      </nav>
-      <div className='p-4 flex items-center space-x-4'>
-        <div className='flex items-center'>
-          <UserButton />
-          {!isCollapsed && (
-            <span className='ml-2 text-white font-medium'>Profile</span>
-          )}
+        <div className='p-4 flex items-center space-x-4'>
+          <div className='flex items-center'>
+            <UserButton />
+            {!isCollapsed && (
+              <span className='ml-2 text-white font-medium'>Profile</span>
+            )}
+          </div>
         </div>
-      </div>
+      </nav>
     </aside>
   );
 };
