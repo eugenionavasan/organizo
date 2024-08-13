@@ -1,9 +1,9 @@
-'use client'
+'use client';
 
 import React, { useState } from 'react';
-import Calendar from '../../../components/calendar/calendar';
-import TimeSlots from '../../../components/calendar/timeSlots';
-import BookingSummary from '../../../components/calendar/bookingSummary';
+import Calendar from '../../components/calendar/calendar';
+import TimeSlots from '../../components/calendar/timeSlots';
+import BookingSummary from '../../components/calendar/bookingSummary';
 
 const App: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
