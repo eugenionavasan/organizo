@@ -1,5 +1,4 @@
-'use client'; // Ensure this is used for client-side components
-
+'use client';
 import { SignIn, useAuth } from '@clerk/nextjs';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';

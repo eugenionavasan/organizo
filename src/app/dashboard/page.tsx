@@ -1,4 +1,4 @@
-'use client'; // Ensure this is present to handle client-side logic
+'use client';
 
 import { useAuth, UserButton } from '@clerk/nextjs';
 import { useEffect } from 'react';
@@ -10,7 +10,7 @@ const DashboardPage: React.FC = () => {
 
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
-      router.push('/login'); // Redirect to login if not signed in
+      router.push('/login');
     }
   }, [isLoaded, isSignedIn, router]);
 
@@ -19,9 +19,14 @@ const DashboardPage: React.FC = () => {
   }
 
   return (
-    <div>
+    <div style={{ padding: '20px' }}>
       <h1>Welcome to your Dashboard</h1>
       <UserButton />
+      <div style={{ marginTop: '20px' }}>
+        <a href='/calendar' style={{ textDecoration: 'none', color: 'blue' }}>
+          Go to Calendar
+        </a>
+      </div>
     </div>
   );
 };
