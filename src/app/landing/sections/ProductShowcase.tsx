@@ -7,14 +7,14 @@ export const ProductShowcase = () => {
   return (
     <section className="bg-gradient-to-b from-[#FFFFFF] to-[#D2DCFF] py-24 overflow-x-clip">
       <div className="container">
-        <div className="max.w-[540px] mx-auto">
+        <div className="section-heading">
           <div className="flex justify-center">
             <div className="tag">Boost your productivity</div>
           </div>
           <h2 className="section-title mt-5 ">
             A more effective way to fill your calender
           </h2>
-          <p className="mt-5">
+          <p className="section-desciption mt-5">
             Lorem ipsum dolor, sit amet consectetur adipisicing elit. Rem.
             Consequuntur blanditiis veritatis at dolore excepturi accusantium
             reprehenderit saepe ad animi?

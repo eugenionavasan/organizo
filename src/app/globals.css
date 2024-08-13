@@ -4,7 +4,7 @@
 
 @layer components {
   .btn {
-    @apply px-4 py-2 rounded font-medium inline-flex items-center justify-center tracking-tight;
+    @apply px-4 py-2 rounded-xl font-medium inline-flex items-center justify-center tracking-tight;
   }
 
   .btn-primary {
@@ -26,5 +26,8 @@
   }
   .section-desciption {
     @apply text-center text-[22px] leading-[30px] tracking-tight text-[#010D3E];
+  }
+  .section-heading {
+    @apply max-w-[540px] mx-auto;
   }
 }
