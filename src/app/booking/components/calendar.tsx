@@ -3,40 +3,46 @@ import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSa
 
 const Calendar: React.FC<{ onSelectDate: (date: Date) => void }> = ({ onSelectDate }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
   const renderHeader = () => {
     const dateFormat = "MMMM yyyy";
 
     return (
-      <div className="header row flex-middle">
-        <div className="col col-start" onClick={() => setCurrentMonth(addDays(currentMonth, -30))}>
-          <button className="icon">Previous Month</button>
-        </div>
-        <div className="col col-center">
-          <span>{format(currentMonth, dateFormat)}</span>
-        </div>
-        <div className="col col-end" onClick={() => setCurrentMonth(addDays(currentMonth, 30))}>
-          <button className="icon">Next Month</button>
-        </div>
+      <div className="flex justify-between items-center mb-4">
+        <button 
+          className="text-gray-600 hover:text-gray-800"
+          onClick={() => setCurrentMonth(addDays(currentMonth, -30))}
+        >
+          &lt;
+        </button>
+        <span className="text-2xl font-bold">
+          {format(currentMonth, dateFormat)}
+        </span>
+        <button 
+          className="text-gray-600 hover:text-gray-800"
+          onClick={() => setCurrentMonth(addDays(currentMonth, 30))}
+        >
+          &gt;
+        </button>
       </div>
     );
   };
 
   const renderDays = () => {
-    const days = [];
     const dateFormat = "EEE";
+    const days = [];
     const startDate = startOfWeek(currentMonth);
 
     for (let i = 0; i < 7; i++) {
       days.push(
-        <div className="col col-center" key={i}>
+        <div className="text-center text-gray-600 font-medium text-xl" key={i}>
           {format(addDays(startDate, i), dateFormat)}
         </div>
       );
     }
 
-    return <div className="days row">{days}</div>;
+    return <div className="grid grid-cols-7 gap-1 mb-2">{days}</div>;
   };
 
   const renderCells = () => {
@@ -57,24 +63,30 @@ const Calendar: React.FC<{ onSelectDate: (date: Date) => void }> = ({ onSelectDa
         const cloneDay = day;
         days.push(
           <div
-            className={`col cell ${!isSameMonth(day, monthStart) ? "disabled" : isSameDay(day, selectedDate || new Date(0)) ? "selected" : ""}`}
+            className={`
+              aspect-square flex items-center justify-center cursor-pointer text-2xl
+              ${!isSameMonth(day, monthStart) ? "text-gray-400" : ""}
+              ${isSameDay(day, selectedDate) 
+                ? "bg-blue-500 text-white rounded-full" 
+                : "hover:bg-gray-100 rounded-full"}
+            `}
             key={day.toString()}
             onClick={() => onDateClick(cloneDay)}
           >
-            <span className="number">{formattedDate}</span>
+            {formattedDate}
           </div>
         );
         day = addDays(day, 1);
       }
       rows.push(
-        <div className="row" key={day.toString()}>
+        <div className="grid grid-cols-7 gap-1" key={day.toString()}>
           {days}
         </div>
       );
       days = [];
     }
 
-    return <div className="body">{rows}</div>;
+    return <div className="mb-4">{rows}</div>;
   };
 
   const onDateClick = (day: Date) => {
@@ -83,7 +95,7 @@ const Calendar: React.FC<{ onSelectDate: (date: Date) => void }> = ({ onSelectDa
   };
 
   return (
-    <div className="calendar">
+    <div className="calendar bg-white p-6 rounded-lg shadow-md w-full aspect-square">
       {renderHeader()}
       {renderDays()}
       {renderCells()}
