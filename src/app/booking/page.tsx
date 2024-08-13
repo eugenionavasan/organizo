@@ -1,15 +1,15 @@
 'use client'
 
 import React, { useState } from 'react';
-import Calendar from '../../components/calendar/calendar';
-import TimeSlots from '../../components/calendar/timeSlots';
-import BookingSummary from '../../components/calendar/bookingSummary';
+import Calendar from './components/calendar';
+import TimeSlots from './components/timeSlots';
+import BookingSummary from './components/bookingSummary';
 
 const App: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
 
-  const price = 100.0;
+  const price = 20.0;
 
   return (
     <div className="booking-container flex gap-8 p-8 bg-gray-100 min-h-screen">
