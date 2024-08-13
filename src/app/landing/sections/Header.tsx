@@ -1,11 +1,11 @@
-import ArrowRight from "@/assets/arrow-right.svg";
-import Logo from "@/assets/logosaas.png";
+import ArrowRight from "@/app/landing/assets/arrow-right.svg";
+import Logo from "@/app/landing/assets/logosaas.png";
 import Image from "next/image";
-import MenuIcon from "@/assets/menu.svg";
+import MenuIcon from "@/app/landing/assets/menu.svg";
 
 export const Header = () => {
   return (
-    <header className="sticky top-0 backdrop-blur-sm z-20">
+    <header className="sticky top-0 backdrop-blur-xl z-20">
       {/* Banner */}
       <div className="flex justify-center items-center py-3 bg-black text-white text-sm gap-3">
         <p className="text-white/60 hidden md:block">
@@ -27,7 +27,7 @@ export const Header = () => {
               <a href="#">Features</a>
               <a href="#">Customer</a>
               <a href="#">Update</a>
-              <a href="#">Help</a>
+              <a href="#">Login</a>
               <button className="bg-black text-white px-4 py-2 rounded font-medium inline-flex items-center justify-center tracking-tight">
                 Get for free
               </button>

@@ -1,8 +1,7 @@
-import ArrowRight from "@/assets/arrow-right.svg";
-import cogImage from "@/assets/cog.png";
-import cylinderImage from "@/assets/cylinder.png";
-import noodleImage from "@/assets/noodle.png";
-import Razer from "@/assets/razer.png";
+import ArrowRight from "@/app/landing/assets/arrow-right.svg";
+import cogImage from "@/app/landing/assets/cog.png";
+import cylinderImage from "@/app/landing/assets/cylinder.png";
+import noodleImage from "@/app/landing/assets/noodle.png";
 import Image from "next/image";
 
 export const Hero = () => {

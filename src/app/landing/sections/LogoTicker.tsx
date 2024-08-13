@@ -1,9 +1,9 @@
-import acmeLogo from "@/assets/logo-acme.png";
-import quantumLogo from "@/assets/logo-quantum.png";
-import echoLogo from "@/assets/logo-echo.png";
-import celestialLogo from "@/assets/logo-celestial.png";
-import pulseLogo from "@/assets/logo-pulse.png";
-import apexLogo from "@/assets/logo-apex.png";
+import acmeLogo from "@/app/landing/assets/logo-acme.png";
+import quantumLogo from "@/app/landing/assets/logo-quantum.png";
+import echoLogo from "@/app/landing/assets/logo-echo.png";
+import celestialLogo from "@/app/landing/assets/logo-celestial.png";
+import pulseLogo from "@/app/landing/assets/logo-pulse.png";
+import apexLogo from "@/app/landing/assets/logo-apex.png";
 import Image from "next/image";
 
 export const LogoTicker = () => {

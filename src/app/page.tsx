@@ -1,7 +1,8 @@
-import { Header } from "@/sections/Header";
-import { Hero } from "@/sections/Hero";
-import { LogoTicker } from "@/sections/LogoTicker";
-import { ProductShowcase } from "@/sections/ProductShowcase";
+import { Header } from "@/app/landing/sections/Header";
+import { Hero } from "@/app/landing/sections/Hero";
+import { LogoTicker } from "@/app/landing/sections/LogoTicker";
+import { ProductShowcase } from "@/app/landing/sections/ProductShowcase";
+import { Pricing } from "@/app/landing/sections/Pricing";
 
 export default function Home() {
   return (
@@ -10,6 +11,7 @@ export default function Home() {
       <Hero />
       <LogoTicker />
       <ProductShowcase />
+      <Pricing />
     </>
   );
 }
