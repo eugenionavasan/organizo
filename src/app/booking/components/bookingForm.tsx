@@ -1,45 +1,102 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import { format } from 'date-fns';
+import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 
 const SERVICE_PRICES = {
   cut: 25,
   color: 40,
   shave: 10,
   style: 20
-};
+} as const;
 
-const BookingSummary: React.FC<{ 
-  date: Date | null; 
-  time: string | null; 
-  onBooking: (date: Date, time: string) => void 
-}> = ({ date, time, onBooking }) => {
+type ServiceType = keyof typeof SERVICE_PRICES;
+
+interface BookingFormProps {
+  date: Date | null;
+  time: string | null;
+  onBooking: (date: Date, time: string) => void;
+}
+
+const BookingForm: React.FC<BookingFormProps> = ({ date, time, onBooking }) => {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
-  const [service, setService] = useState('cut');
-  const [paymentOption, setPaymentOption] = useState('now');
-  const [price, setPrice] = useState(SERVICE_PRICES.cut);
+  const [service, setService] = useState<ServiceType>('cut');
+  const [paymentOption, setPaymentOption] = useState<'now' | 'later'>('now');
+  const [price, setPrice] = useState<number>(SERVICE_PRICES.cut);
   const [bookingSuccess, setBookingSuccess] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [paymentError, setPaymentError] = useState<string | null>(null);
+
+  const stripe = useStripe();
+  const elements = useElements();
 
   useEffect(() => {
-    setPrice(SERVICE_PRICES[service as keyof typeof SERVICE_PRICES]);
+    setPrice(SERVICE_PRICES[service]);
   }, [service]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (date && time) {
-      onBooking(date, time);
-      console.log({ name, phone, email, service, paymentOption, date, time, price });
-      setBookingSuccess(true);
-      // Reset form fields
-      setName('');
-      setPhone('');
-      setEmail('');
-      setService('cut');
-      setPaymentOption('now');
-    } else {
-      console.error('Date or time not selected');
+    if (!stripe || !elements || !date || !time) {
+      return;
     }
+
+    setIsProcessing(true);
+    setPaymentError(null);
+
+    if (paymentOption === 'now') {
+      const cardElement = elements.getElement(CardElement);
+      
+      if (!cardElement) {
+        setPaymentError('Card element not found');
+        setIsProcessing(false);
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/create-payment-intent', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount: price * 100 })
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to create payment intent');
+        }
+
+        const { clientSecret } = await response.json();
+
+        const result = await stripe.confirmCardPayment(clientSecret, {
+          payment_method: { card: cardElement }
+        });
+
+        if (result.error) {
+          setPaymentError(result.error.message || 'Payment failed');
+        } else if (result.paymentIntent.status === 'succeeded') {
+          onBooking(date, time);
+          setBookingSuccess(true);
+          resetForm();
+        }
+      } catch (error) {
+        setPaymentError('An error occurred during payment processing');
+      }
+    } else {
+      onBooking(date, time);
+      setBookingSuccess(true);
+      resetForm();
+    }
+
+    setIsProcessing(false);
+  };
+
+  const resetForm = () => {
+    setName('');
+    setPhone('');
+    setEmail('');
+    setService('cut');
+    setPaymentOption('now');
   };
 
   return (
@@ -88,7 +145,7 @@ const BookingSummary: React.FC<{
           <label className="block text-sm font-medium text-gray-700">Service</label>
           <select
             value={service}
-            onChange={(e) => setService(e.target.value)}
+            onChange={(e) => setService(e.target.value as ServiceType)}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
             required
           >
@@ -103,7 +160,7 @@ const BookingSummary: React.FC<{
           <label className="block text-sm font-medium text-gray-700">Payment Option</label>
           <select
             value={paymentOption}
-            onChange={(e) => setPaymentOption(e.target.value)}
+            onChange={(e) => setPaymentOption(e.target.value as 'now' | 'later')}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
             required
           >
@@ -112,15 +169,29 @@ const BookingSummary: React.FC<{
           </select>
         </div>
         
+        {paymentOption === 'now' && (
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">Card Details</label>
+            <CardElement className="mt-1 p-2 border rounded" />
+          </div>
+        )}
+        
         <p className="text-xl font-bold mb-4">${price.toFixed(2)}</p>
         
         <button 
           type="submit" 
           className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
+          disabled={isProcessing}
         >
-          Book Appointment
+          {isProcessing ? 'Processing...' : 'Book Appointment'}
         </button>
       </form>
+      
+      {paymentError && (
+        <div className="mt-4 p-3 bg-red-100 text-red-700 rounded-md">
+          {paymentError}
+        </div>
+      )}
       
       {bookingSuccess && (
         <div className="mt-4 p-3 bg-green-100 text-green-700 rounded-md">
@@ -131,4 +202,4 @@ const BookingSummary: React.FC<{
   );
 };
 
-export default BookingSummary;
+export default BookingForm;

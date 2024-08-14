@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useState } from 'react';
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay, isPast, isToday } from 'date-fns';
 

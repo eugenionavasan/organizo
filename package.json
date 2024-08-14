@@ -18,6 +18,8 @@
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@heroicons/react": "^2.1.5",
+    "@stripe/react-stripe-js": "^2.7.3",
+    "@stripe/stripe-js": "^4.2.0",
     "autoprefixer": "^10.4.20",
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
@@ -26,7 +28,8 @@
     "react": "^18",
     "react-dom": "^18",
     "react-icons": "^5.3.0",
-    "sharp": "^0.33.4"
+    "sharp": "^0.33.4",
+    "stripe": "^16.7.0"
   },
   "devDependencies": {
     "@svgr/webpack": "^8.1.0",
