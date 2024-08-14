@@ -2,13 +2,15 @@
   "name": "light-saas-landing-page",
   "version": "0.1.0",
   "private": true,
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "deev": "next build && next start",
-    "seed": "ts-node --transpile-only prisma/seed.ts"
+    "deev": "next build && next start"
   },
   "dependencies": {
     "@clerk/clerk-sdk-node": "^5.0.26",
@@ -32,7 +34,7 @@
   },
   "devDependencies": {
     "@svgr/webpack": "^8.1.0",
-    "@types/node": "^20",
+    "@types/node": "^20.14.15",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8",
