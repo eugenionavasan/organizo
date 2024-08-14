@@ -37,3 +37,6 @@
     @apply p-10 border border-[#222222]/10 rounded-3xl shadow-[0_7px_14px_#d5d4d4] max-w-xs w-full;
   }
 }
+.landing-page {
+  scroll-behavior: smooth;
+}

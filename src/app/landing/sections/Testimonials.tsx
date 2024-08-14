@@ -87,7 +87,7 @@ const TestomonialsColumn = ({
   duration,
 }: TestimonialsProps) => {
   return (
-    <div className={className}>
+    <div id="testimonials" className={className}>
       <motion.div
         animate={{
           translateY: "-50%",
