@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay } from 'date-fns';
+import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay, isPast, isToday } from 'date-fns';
 
 const Calendar: React.FC<{ onSelectDate: (date: Date) => void }> = ({ onSelectDate }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -61,17 +61,19 @@ const Calendar: React.FC<{ onSelectDate: (date: Date) => void }> = ({ onSelectDa
       for (let i = 0; i < 7; i++) {
         formattedDate = format(day, dateFormat);
         const cloneDay = day;
+        const isDisabled = isPast(day) && !isToday(day);
         days.push(
           <div
             className={`
               aspect-square flex items-center justify-center cursor-pointer text-2xl
               ${!isSameMonth(day, monthStart) ? "text-gray-400" : ""}
-              ${isSameDay(day, selectedDate) 
+              ${isDisabled ? "text-gray-300 cursor-not-allowed" : ""}
+              ${isSameDay(day, selectedDate) && !isDisabled
                 ? "bg-blue-500 text-white rounded-full" 
-                : "hover:bg-gray-100 rounded-full"}
+                : isDisabled ? "" : "hover:bg-gray-100 rounded-full"}
             `}
             key={day.toString()}
-            onClick={() => onDateClick(cloneDay)}
+            onClick={() => !isDisabled && onDateClick(cloneDay)}
           >
             {formattedDate}
           </div>
