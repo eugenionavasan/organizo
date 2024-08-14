@@ -8,9 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "deev": "next build && next start",
-    "prisma": {
-      "seed": "ts-node --transpile-only prisma/seed.ts"
-    }
+    "seed": "ts-node --transpile-only prisma/seed.ts"
   },
   "dependencies": {
     "@clerk/clerk-sdk-node": "^5.0.26",
