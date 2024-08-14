@@ -8,8 +8,17 @@ import BookingSummary from './components/bookingSummary';
 const App: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [bookedTimes, setBookedTimes] = useState<{ [key: string]: string[] }>({});
 
-  const price = 20.0;
+  const handleBooking = (date: Date, time: string) => {
+    setBookedTimes(prev => {
+      const dateString = date.toISOString().split('T')[0];
+      return {
+        ...prev,
+        [dateString]: [...(prev[dateString] || []), time]
+      };
+    });
+  };
 
   return (
     <Layout>
@@ -18,16 +27,18 @@ const App: React.FC = () => {
           <Calendar onSelectDate={setSelectedDate} />
         </div>
         <div className='w-1/4'>
+          <h2 className="text-xl font-semibold mb-4">Select a Date and Time</h2>
           <TimeSlots
             selectedDate={selectedDate}
             onSelectTime={setSelectedTime}
+            bookedTimes={bookedTimes[selectedDate.toISOString().split('T')[0]] || []}
           />
         </div>
-        <div className='w-1/4 flex flex-col justify-between'>
+        <div className='w-1/4'>
           <BookingSummary
             date={selectedDate}
             time={selectedTime}
-            price={price}
+            onBooking={handleBooking}
           />
         </div>
       </div>
