@@ -8,7 +8,7 @@ export const Header = () => {
     <header className="sticky top-0 backdrop-blur-xl z-20">
       {/* Banner */}
       <div className="flex justify-center items-center py-3 bg-black text-white text-sm gap-3">
-        <p className="text-white/60 hidden md:block">
+        <p className="text-#ffffff/60 hidden md:block">
           Streamline your workflow and boost your productivity
         </p>
         <div className="inline-flex gap-1 items-center">
@@ -22,14 +22,14 @@ export const Header = () => {
           <div className="flex items-center justify-between">
             <Image src={Logo} alt="Organizo" height={40} width={40} />
             <MenuIcon className="h-5 w-5 md:hidden" />
-            <nav className="hidden md:flex gap-6 text-black/60 items-center">
+            <nav className="hidden md:flex gap-6 text-black items-center">
               <a href="#">About</a>
               <a href="#">Features</a>
               <a href="#">Customer</a>
               <a href="#">Update</a>
               <a href="#">Login</a>
               <button className="bg-black text-white px-4 py-2 rounded font-medium inline-flex items-center justify-center tracking-tight">
-                Get for free
+                Book a Demo
               </button>
             </nav>
           </div>
