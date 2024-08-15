@@ -1,5 +1,5 @@
 // import { PrismaClient } from '@prisma/client';
-const { PrismaClient } = require('@prisma/client');
+export const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
 
@@ -8,35 +8,35 @@ async function main() {
   const haircut = await prisma.service.create({
     data: {
       name: 'haircut',
-      price: 25.00,
+      price: 25.0,
     },
   });
 
   const hairColoring = await prisma.service.create({
     data: {
       name: 'haircoloring',
-      price: 60.00,
+      price: 60.0,
     },
   });
 
   const hairWashing = await prisma.service.create({
     data: {
       name: 'hairwashing',
-      price: 15.00,
+      price: 15.0,
     },
   });
 
   const beardTrim = await prisma.service.create({
     data: {
       name: 'beardtrim',
-      price: 20.00,
+      price: 20.0,
     },
   });
 
   const scalpMassage = await prisma.service.create({
     data: {
       name: 'scalpmassage',
-      price: 30.00,
+      price: 30.0,
     },
   });
 

@@ -1,32 +1,30 @@
-'use client';
-
-import { useRouter } from 'next/navigation';
+import { PrismaClient } from '@prisma/client';
+import Link from 'next/link';
 import Layout from '../../components/layout';
 
-type Customer = {
-  id: number;
-  name: string;
-  tel: string;
-  service: string;
-};
+const prisma = new PrismaClient();
 
-const mockCustomers: Customer[] = [
-  { id: 1, name: 'John Doe', tel: '123-456-7890', service: 'Web Development' },
-  { id: 2, name: 'Jane Smith', tel: '987-654-3210', service: 'Graphic Design' },
-  {
-    id: 3,
-    name: 'Alice Johnson',
-    tel: '555-123-4567',
-    service: 'SEO Optimization',
-  },
-];
+const CustomerListPage = async () => {
+  const customers = await prisma.customer.findMany({
+    include: {
+      bookings: {
+        include: {
+          service: true,
+        },
+        orderBy: {
+          bookedTime: 'desc',
+        },
+        take: 1, // Get the latest booking for each customer
+      },
+    },
+  });
 
-const CustomerListPage: React.FC = () => {
-  const router = useRouter();
-
-  const handleEdit = (id: number) => {
-    router.push(`/customers/${id}/edit`);
-  };
+  const formattedCustomers = customers.map((customer) => ({
+    id: customer.id,
+    name: customer.name,
+    phone: customer.phone,
+    service: customer.bookings[0]?.service.name || 'No service booked',
+  }));
 
   return (
     <Layout>
@@ -54,30 +52,31 @@ const CustomerListPage: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {mockCustomers.map((customer) => (
+            {formattedCustomers.map((customer) => (
               <tr key={customer.id}>
                 <td style={{ border: '1px solid #ddd', padding: '8px' }}>
                   {customer.name}
                 </td>
                 <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-                  {customer.tel}
+                  {customer.phone}
                 </td>
                 <td style={{ border: '1px solid #ddd', padding: '8px' }}>
                   {customer.service}
                 </td>
                 <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-                  <button
-                    style={{
-                      padding: '5px 10px',
-                      backgroundColor: '#0070f3',
-                      color: 'white',
-                      border: 'none',
-                      cursor: 'pointer',
-                    }}
-                    onClick={() => handleEdit(customer.id)}
-                  >
-                    Edit
-                  </button>
+                  <Link href={`/customers/${customer.id}/edit`}>
+                    <button
+                      style={{
+                        padding: '5px 10px',
+                        backgroundColor: '#0070f3',
+                        color: 'white',
+                        border: 'none',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      Edit
+                    </button>
+                  </Link>
                 </td>
               </tr>
             ))}
