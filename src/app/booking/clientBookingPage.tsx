@@ -13,6 +13,7 @@ const ClientBookingPage: React.FC = () => {
   const [bookedTimes, setBookedTimes] = useState<{ [key: string]: string[] }>({});
 
   const handleBooking = (date: Date, time: string) => {
+    // Update booked times for the selected date
     setBookedTimes(prev => {
       const dateString = date.toISOString().split('T')[0];
       return {
@@ -20,6 +21,12 @@ const ClientBookingPage: React.FC = () => {
         [dateString]: [...(prev[dateString] || []), time]
       };
     });
+  };
+
+  const handleTimeBooked = (time: string) => {
+    if (selectedDate) {
+      handleBooking(selectedDate, time);
+    }
   };
 
   return (
@@ -42,6 +49,8 @@ const ClientBookingPage: React.FC = () => {
               date={selectedDate}
               time={selectedTime}
               onBooking={handleBooking}
+              bookedTimes={bookedTimes[selectedDate.toISOString().split('T')[0]] || []}
+              onTimeBooked={handleTimeBooked}
             />
           </div>
         </div>

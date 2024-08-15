@@ -3,12 +3,14 @@
 import React, { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import TimeSlots from './timeSlots';  // Import TimeSlots component
 
 const SERVICE_PRICES = {
-  cut: 25,
-  color: 40,
-  shave: 10,
-  style: 20
+  haircut: 25,
+  haircoloring: 60,
+  hairwashing: 15,
+  beardtrim: 20,
+  scalpmassage: 30,
 } as const;
 
 type ServiceType = keyof typeof SERVICE_PRICES;
@@ -17,15 +19,17 @@ interface BookingFormProps {
   date: Date | null;
   time: string | null;
   onBooking: (date: Date, time: string) => void;
+  bookedTimes: string[]; // Passed from parent component
+  onTimeBooked: (time: string) => void; // Callback to handle time booking
 }
 
-const BookingForm: React.FC<BookingFormProps> = ({ date, time, onBooking }) => {
+const BookingForm: React.FC<BookingFormProps> = ({ date, time, onBooking, bookedTimes, onTimeBooked }) => {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
-  const [service, setService] = useState<ServiceType>('cut');
+  const [service, setService] = useState<ServiceType>('haircut');
   const [paymentOption, setPaymentOption] = useState<'now' | 'later'>('now');
-  const [price, setPrice] = useState<number>(SERVICE_PRICES.cut);
+  const [price, setPrice] = useState<number>(SERVICE_PRICES.haircut);
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentError, setPaymentError] = useState<string | null>(null);
@@ -46,9 +50,11 @@ const BookingForm: React.FC<BookingFormProps> = ({ date, time, onBooking }) => {
     setIsProcessing(true);
     setPaymentError(null);
 
+    let paymentSucceeded = false;
+
     if (paymentOption === 'now') {
       const cardElement = elements.getElement(CardElement);
-      
+
       if (!cardElement) {
         setPaymentError('Card element not found');
         setIsProcessing(false);
@@ -75,17 +81,43 @@ const BookingForm: React.FC<BookingFormProps> = ({ date, time, onBooking }) => {
         if (result.error) {
           setPaymentError(result.error.message || 'Payment failed');
         } else if (result.paymentIntent.status === 'succeeded') {
-          onBooking(date, time);
-          setBookingSuccess(true);
-          resetForm();
+          paymentSucceeded = true;
         }
       } catch (error) {
         setPaymentError('An error occurred during payment processing');
       }
     } else {
-      onBooking(date, time);
-      setBookingSuccess(true);
-      resetForm();
+      paymentSucceeded = true;
+    }
+
+    if (paymentSucceeded) {
+      try {
+        const response = await fetch('/api/book', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            date: format(date, 'yyyy-MM-dd'),
+            time,
+            name,
+            phone,
+            email,
+            service,
+            hasPaid: paymentOption === 'now',
+          }),
+        });
+
+        if (response.ok) {
+          setBookingSuccess(true);
+          onTimeBooked(time);  // Add the booked time to the blocked timeslots
+          onBooking(date!, time); // Confirm booking
+          resetForm();
+        } else {
+          const { error } = await response.json();
+          setPaymentError(error || 'An error occurred during booking');
+        }
+      } catch (error) {
+        setPaymentError('An error occurred during booking');
+      }
     }
 
     setIsProcessing(false);
@@ -95,7 +127,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ date, time, onBooking }) => {
     setName('');
     setPhone('');
     setEmail('');
-    setService('cut');
+    setService('haircut');
     setPaymentOption('now');
   };
 
@@ -149,10 +181,11 @@ const BookingForm: React.FC<BookingFormProps> = ({ date, time, onBooking }) => {
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
             required
           >
-            <option value="cut">Cut Hair - $25</option>
-            <option value="color">Color Hair - $40</option>
-            <option value="shave">Shave beard - $10</option>
-            <option value="style">Hair styling - $20</option>
+            <option value="haircut">Hair cut</option>
+            <option value="haircoloring">Hair coloring</option>
+            <option value="hairwashing">Hair washing</option>
+            <option value="beardtrim">Beard trim</option>
+            <option value="scalpmassage">Scalp massage</option>
           </select>
         </div>
         
