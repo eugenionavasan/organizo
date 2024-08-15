@@ -12,7 +12,7 @@ import {
 } from 'recharts';
 import { revenueData } from '../lib/mockData';
 
-const graphTypes = ['daily', 'weekly', 'monthly', 'yearly', 'total'] as const;
+const graphTypes = ['weekly', 'monthly', 'yearly', 'total'] as const;
 
 export default function RevenueGraph() {
   const [currentGraphIndex, setCurrentGraphIndex] = useState(0);
