@@ -1,99 +1,86 @@
-'use client';
+// src/app/customers/[id]/edit/page.tsx
 
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { PrismaClient } from '@prisma/client';
+import { redirect } from 'next/navigation';
+
+const prisma = new PrismaClient();
 
 type Customer = {
-  id: number;
+  id: string;
   name: string;
-  tel: string;
-  service: string;
+  phone: string;
+  email: string;
 };
 
-const mockCustomers: Customer[] = [
-  { id: 1, name: 'John Doe', tel: '123-456-7890', service: 'Web Development' },
-  { id: 2, name: 'Jane Smith', tel: '987-654-3210', service: 'Graphic Design' },
-  {
-    id: 3,
-    name: 'Alice Johnson',
-    tel: '555-123-4567',
-    service: 'SEO Optimization',
-  },
-];
+async function getCustomerData(id: string): Promise<Customer | null> {
+  return await prisma.customer.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      name: true,
+      phone: true,
+      email: true,
+    },
+  });
+}
 
-const EditCustomerPage: React.FC<{ params: { id: string } }> = ({ params }) => {
-  const router = useRouter();
-  const [customer, setCustomer] = useState<Customer | null>(null);
+const EditCustomerPage = async ({ params }: { params: { id: string } }) => {
+  const customer = await getCustomerData(params.id);
 
-  useEffect(() => {
-    const customerToEdit = mockCustomers.find(
-      (c) => c.id === parseInt(params.id)
-    );
-    if (customerToEdit) {
-      setCustomer(customerToEdit);
-    } else {
-      router.push('/customers'); // Redirect if the customer is not found
-    }
-  }, [params.id, router]);
-
-  const handleSave = () => {
-    // Mock save logic
-    alert('Customer details saved!');
-    router.push('/customers');
-  };
-
-  if (!customer) return <div>Loading...</div>;
+  if (!customer) {
+    redirect('/customers');
+  }
 
   return (
     <div style={{ padding: '20px' }}>
-      <h1>Edit Customer: {customer.name}</h1>
-      <div style={{ marginBottom: '20px' }}>
-        <label>
-          Name:
-          <input
-            type='text'
-            value={customer.name}
-            onChange={(e) => setCustomer({ ...customer, name: e.target.value })}
-            style={{ marginLeft: '10px', padding: '5px', width: '300px' }}
-          />
-        </label>
-      </div>
-      <div style={{ marginBottom: '20px' }}>
-        <label>
-          Telephone:
-          <input
-            type='text'
-            value={customer.tel}
-            onChange={(e) => setCustomer({ ...customer, tel: e.target.value })}
-            style={{ marginLeft: '10px', padding: '5px', width: '300px' }}
-          />
-        </label>
-      </div>
-      <div style={{ marginBottom: '20px' }}>
-        <label>
-          Service:
-          <input
-            type='text'
-            value={customer.service}
-            onChange={(e) =>
-              setCustomer({ ...customer, service: e.target.value })
-            }
-            style={{ marginLeft: '10px', padding: '5px', width: '300px' }}
-          />
-        </label>
-      </div>
-      <button
-        style={{
-          padding: '10px 20px',
-          backgroundColor: '#0070f3',
-          color: 'white',
-          border: 'none',
-          cursor: 'pointer',
-        }}
-        onClick={handleSave}
-      >
-        Save
-      </button>
+      <h1>Edit Customer</h1>
+      <form action={`/api/customers/${customer.id}`} method='POST'>
+        <div style={{ marginBottom: '20px' }}>
+          <label>
+            Name:
+            <input
+              type='text'
+              name='name'
+              defaultValue={customer.name}
+              style={{ marginLeft: '10px', padding: '5px', width: '300px' }}
+            />
+          </label>
+        </div>
+        <div style={{ marginBottom: '20px' }}>
+          <label>
+            Telephone:
+            <input
+              type='text'
+              name='phone'
+              defaultValue={customer.phone}
+              style={{ marginLeft: '10px', padding: '5px', width: '300px' }}
+            />
+          </label>
+        </div>
+        <div style={{ marginBottom: '20px' }}>
+          <label>
+            Email:
+            <input
+              type='text'
+              name='email'
+              defaultValue={customer.email}
+              style={{ marginLeft: '10px', padding: '5px', width: '300px' }}
+            />
+          </label>
+        </div>
+        <button
+          type='submit'
+          style={{
+            padding: '10px 20px',
+            backgroundColor: '#0070f3',
+            color: 'white',
+            border: 'none',
+            cursor: 'pointer',
+          }}
+        >
+          Save
+        </button>
+      </form>
     </div>
   );
 };

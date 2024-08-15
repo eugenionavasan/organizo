@@ -4,7 +4,8 @@ import Layout from '../../components/layout';
 
 const prisma = new PrismaClient();
 
-const CustomerListPage = async () => {
+// Fetching data directly in the server component
+export default async function CustomerListPage() {
   const customers = await prisma.customer.findMany({
     include: {
       bookings: {
@@ -14,7 +15,7 @@ const CustomerListPage = async () => {
         orderBy: {
           bookedTime: 'desc',
         },
-        take: 1, // Get the latest booking for each customer
+        take: 1,
       },
     },
   });
@@ -85,6 +86,4 @@ const CustomerListPage = async () => {
       </div>
     </Layout>
   );
-};
-
-export default CustomerListPage;
+}
