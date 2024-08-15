@@ -66,47 +66,31 @@ export default async function CalendarPage() {
 
   return (
     <Layout>
-      <div style={{ padding: '20px' }}>
-        <h1>Booking Calendar</h1>
+      <div className='p-5 bg-gray-100 font-sans'>
+        <h1 className='text-2xl font-bold mb-4'>Booking Calendar</h1>
         <CalendarHeader />
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <div className='grid grid-cols-7 gap-4'>
           {days.map((day) => {
             const dayString = format(day, 'yyyy-MM-dd');
-            const dayBookings = formattedBookings[dayString] || [];
-            const isTodayClass = isToday(day) ? 'today' : '';
+            const dayBookings = (formattedBookings[dayString] || []).sort(
+              (a, b) => a.time.localeCompare(b.time) // Sort by time
+            );
+            const isTodayClass = isToday(day) ? 'bg-blue-100' : '';
 
             return (
               <div
                 key={dayString}
-                style={{
-                  border: '1px solid #ddd',
-                  padding: '10px',
-                  marginBottom: '10px',
-                  backgroundColor: isTodayClass ? '#e0f7fa' : 'white',
-                  borderRadius: '5px',
-                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-                }}
+                className={`bg-white border border-gray-300 p-3 rounded-lg shadow-sm ${isTodayClass}`}
               >
-                <strong
-                  style={{
-                    display: 'block',
-                    fontSize: '18px',
-                    marginBottom: '5px',
-                  }}
-                >
-                  {format(day, 'dd MMMM yyyy')}
+                <strong className='block text-xl font-semibold mb-2'>
+                  {format(day, 'd')}
                 </strong>
                 <div>
                   {dayBookings.length > 0 ? (
                     dayBookings.map((booking, index) => (
                       <div
                         key={index}
-                        style={{
-                          marginBottom: '5px',
-                          padding: '5px',
-                          border: '1px solid #ddd',
-                          borderRadius: '3px',
-                        }}
+                        className='bg-blue-500 text-white p-2 rounded-md text-sm mb-1'
                       >
                         <strong>{booking.time}</strong>
                         <div>{booking.service}</div>
@@ -114,7 +98,7 @@ export default async function CalendarPage() {
                       </div>
                     ))
                   ) : (
-                    <div>No bookings</div>
+                    <div className='text-gray-500 text-sm'>No bookings</div>
                   )}
                 </div>
               </div>
