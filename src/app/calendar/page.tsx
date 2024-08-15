@@ -1,130 +1,127 @@
-'use client';
-
-import { usePathname } from 'next/navigation';
-import React, { useState } from 'react';
+import { PrismaClient } from '@prisma/client';
 import Layout from '../../components/layout';
+import {
+  format,
+  startOfMonth,
+  endOfMonth,
+  eachDayOfInterval,
+  isToday,
+} from 'date-fns';
+import CalendarHeader from './CalendarHeader'; // Import the Client Component
 
-type Event = {
-  time: string;
-  title: string;
+// Initialize Prisma Client
+const prisma = new PrismaClient();
+
+// Fetch booking data
+const fetchBookings = async () => {
+  return await prisma.booking.findMany({
+    include: {
+      service: {
+        select: {
+          name: true,
+        },
+      },
+      customer: {
+        select: {
+          name: true,
+        },
+      },
+    },
+  });
 };
 
-const mockEvents: { [key: number]: Event[] } = {
-  1: [
-    { time: '9:30 AM', title: 'Booking 1' },
-    { time: '1:00 PM', title: 'Booking 2' },
-  ],
-  4: [{ time: '8:00 AM', title: 'Booking 3' }],
-  5: [{ time: '2:00 PM', title: 'Booking 4' }],
-  10: [{ time: '10:30 AM', title: 'Booking 5' }],
-};
+// Calendar page component
+export default async function CalendarPage() {
+  const bookings = await fetchBookings();
 
-const getDaysInMonth = (month: number, year: number) => {
-  return new Date(year, month, 0).getDate();
-};
+  // Format bookings into a calendar-friendly format
+  const formattedBookings = bookings.reduce(
+    (
+      acc: {
+        [key: string]: { time: string; service: string; customer: string }[];
+      },
+      booking
+    ) => {
+      const date = format(new Date(booking.bookedTime), 'yyyy-MM-dd');
+      const time = format(new Date(booking.bookedTime), 'HH:mm');
 
-const Calendar: React.FC = () => {
-  const [month, setMonth] = useState<number>(new Date().getMonth() + 1); // 1-based month
-  const [year, setYear] = useState<number>(new Date().getFullYear());
-  const pathname = usePathname();
+      if (!acc[date]) {
+        acc[date] = [];
+      }
 
-  const handleMonthChange = (direction: 'prev' | 'next') => {
-    if (direction === 'prev') {
-      setMonth(month === 1 ? 12 : month - 1);
-      if (month === 1) setYear(year - 1);
-    } else {
-      setMonth(month === 12 ? 1 : month + 1);
-      if (month === 12) setYear(year + 1);
-    }
-  };
+      acc[date].push({
+        time,
+        service: booking.service.name,
+        customer: booking.customer.name,
+      });
+      return acc;
+    },
+    {}
+  );
 
-  const daysInMonth = getDaysInMonth(month, year);
+  const today = new Date();
+  const start = startOfMonth(today);
+  const end = endOfMonth(today);
+  const days = eachDayOfInterval({ start, end });
 
   return (
     <Layout>
-      <div className='flex'>
-        <main className='flex-1 p-4'>
-          <div style={styles.container}>
-            <div style={styles.header}>
-              <button onClick={() => handleMonthChange('prev')}>‹</button>
-              <span>{`${new Date(year, month - 1).toLocaleString('default', {
-                month: 'long',
-              })} ${year}`}</span>
-              <button onClick={() => handleMonthChange('next')}>›</button>
-            </div>
-            <div style={styles.list}>
-              {Array.from({ length: daysInMonth }, (_, i) => i + 1).map(
-                (day) => (
-                  <div key={day} style={styles.dayRow}>
-                    <div style={styles.dayNumber}>{day}</div>
-                    <div style={styles.eventList}>
-                      {mockEvents[day as keyof typeof mockEvents]?.map(
-                        (event, index) => (
-                          <div key={index} style={styles.event}>
-                            {event.title} - {event.time}
-                          </div>
-                        )
-                      )}
-                    </div>
-                  </div>
-                )
-              )}
-            </div>
-          </div>
-        </main>
+      <div style={{ padding: '20px' }}>
+        <h1>Booking Calendar</h1>
+        <CalendarHeader />
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {days.map((day) => {
+            const dayString = format(day, 'yyyy-MM-dd');
+            const dayBookings = formattedBookings[dayString] || [];
+            const isTodayClass = isToday(day) ? 'today' : '';
+
+            return (
+              <div
+                key={dayString}
+                style={{
+                  border: '1px solid #ddd',
+                  padding: '10px',
+                  marginBottom: '10px',
+                  backgroundColor: isTodayClass ? '#e0f7fa' : 'white',
+                  borderRadius: '5px',
+                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                }}
+              >
+                <strong
+                  style={{
+                    display: 'block',
+                    fontSize: '18px',
+                    marginBottom: '5px',
+                  }}
+                >
+                  {format(day, 'dd MMMM yyyy')}
+                </strong>
+                <div>
+                  {dayBookings.length > 0 ? (
+                    dayBookings.map((booking, index) => (
+                      <div
+                        key={index}
+                        style={{
+                          marginBottom: '5px',
+                          padding: '5px',
+                          border: '1px solid #ddd',
+                          borderRadius: '3px',
+                        }}
+                      >
+                        <strong>{booking.time}</strong>
+                        <div>{booking.service}</div>
+                        <div>{booking.customer}</div>
+                      </div>
+                    ))
+                  ) : (
+                    <div>No bookings</div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </Layout>
   );
-};
-
-export default Calendar;
-
-const styles = {
-  container: {
-    display: 'flex',
-    flexDirection: 'column' as 'column',
-    alignItems: 'center',
-    padding: '20px',
-    fontFamily: 'Arial, sans-serif',
-    backgroundColor: '#f4f4f4',
-    width: '100%',
-    maxWidth: '600px',
-    margin: '0 auto',
-  },
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '100%',
-    marginBottom: '20px',
-    fontSize: '18px',
-    fontWeight: 'bold',
-  },
-  list: {
-    width: '100%',
-    backgroundColor: '#fff',
-    borderRadius: '5px',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-  },
-  dayRow: {
-    display: 'flex',
-    borderBottom: '1px solid #ddd',
-    padding: '10px 15px',
-  },
-  dayNumber: {
-    fontWeight: 'bold',
-    marginRight: '15px',
-  },
-  eventList: {
-    display: 'flex',
-    flexDirection: 'column' as 'column',
-    gap: '5px',
-  },
-  event: {
-    backgroundColor: '#0070f3',
-    color: '#fff',
-    padding: '5px 10px',
-    borderRadius: '3px',
-    fontSize: '14px',
-  },
-};
+}
