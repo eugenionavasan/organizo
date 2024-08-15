@@ -30,8 +30,8 @@ export const Header = () => {
               <a href='#preview'>Preview</a>
               <a href='#pricing'>Pricing</a>
               <a href='#testimonials'>Testimonials</a>
-              <Link href='/login'>
-                <a className='hover:text-black'>Login</a>
+              <Link href='/login' className='hover:text-black'>
+                Login
               </Link>
               <button className='btn btn-primary'>Book a Demo</button>
             </nav>

@@ -35,47 +35,47 @@ export const Sidebar = () => {
       <nav className={`flex-1 px-4 ${isCollapsed ? 'hidden' : ''}`}>
         <ul className='space-y-2'>
           <li>
-            <Link href='/dashboard'>
-              <a
-                className={`block py-2.5 px-4 rounded ${
-                  pathname === '/dashboard' ? 'bg-gray-700' : ''
-                }`}
-              >
+            <Link
+              href='/dashboard'
+              className={`block py-2.5 px-4 rounded ${
+                pathname === '/dashboard' ? 'bg-gray-700' : ''
+              }`}>
+              
                 Dashboard
-              </a>
+              
             </Link>
           </li>
           <li>
-            <Link href='/customers'>
-              <a
-                className={`block py-2.5 px-4 rounded ${
-                  pathname === '/customers' ? 'bg-gray-700' : ''
-                }`}
-              >
+            <Link
+              href='/customers'
+              className={`block py-2.5 px-4 rounded ${
+                pathname === '/customers' ? 'bg-gray-700' : ''
+              }`}>
+              
                 Customers
-              </a>
+              
             </Link>
           </li>
           <li>
-            <Link href='/booking'>
-              <a
-                className={`block py-2.5 px-4 rounded ${
-                  pathname === '/booking' ? 'bg-gray-700' : ''
-                }`}
-              >
+            <Link
+              href='/booking'
+              className={`block py-2.5 px-4 rounded ${
+                pathname === '/booking' ? 'bg-gray-700' : ''
+              }`}>
+              
                 Booking
-              </a>
+              
             </Link>
           </li>
           <li>
-            <Link href='/calendar'>
-              <a
-                className={`block py-2.5 px-4 rounded ${
-                  pathname === '/calendar' ? 'bg-gray-700' : ''
-                }`}
-              >
+            <Link
+              href='/calendar'
+              className={`block py-2.5 px-4 rounded ${
+                pathname === '/calendar' ? 'bg-gray-700' : ''
+              }`}>
+              
                 Calendar
-              </a>
+              
             </Link>
           </li>
         </ul>
