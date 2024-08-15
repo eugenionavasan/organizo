@@ -65,7 +65,10 @@ export default function UpcomingAppointments() {
 
   return (
     <div className="w-full max-w-md bg-white rounded-lg shadow-md p-3 overflow-y-auto h-full">
-      <h3 className="text-xl font-bold mb-4 text-gray-500 hover:scale-105">Upcoming Appointments</h3>
+        <div className="sticky top-0 bg-white p-4 border-b z-10">
+            <h3 className="text-xl font-bold mb-4 text-gray-500 hover:scale-105">Upcoming Appointments</h3>
+            </div>
+
       {sortedAppointments.map((appointment, index) => (
         <Appointment
           key={index}
