@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
+import { parseISO } from 'date-fns';
 
 const prisma = new PrismaClient();
 
@@ -8,7 +9,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const { date, time, name, phone, email, service, hasPaid } = req.body;
 
     try {
-      // Find or create the customer
+      // Find or create customer
       let customer = await prisma.customer.findUnique({
         where: { email },
       });
@@ -19,7 +20,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
       }
 
-      // Find the service
+      // Find service
       const serviceRecord = await prisma.service.findFirst({
         where: { name: service },
       });
@@ -28,8 +29,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(404).json({ error: 'Service not found' });
       }
 
-      // Create the booking
-      const bookedTime = new Date(`${date}T${time}:00Z`); // Convert date and time to DateTime format
+      // Parse the date and time strings into a valid Date object
+      const bookedTime = parseISO(`${date}T${time}`);
+
+      if (isNaN(bookedTime.getTime())) {
+        return res.status(400).json({ error: 'Invalid date or time provided' });
+      }
+
+      // Create booking
       const booking = await prisma.booking.create({
         data: {
           bookedTime,

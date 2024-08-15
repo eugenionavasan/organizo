@@ -1,6 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { format, parseISO } from 'date-fns';
+import { toZonedTime } from 'date-fns-tz';
 import Layout from '../../components/layout';
 import Calendar from './components/calendar';
 import TimeSlots from './components/timeSlots';
@@ -12,10 +14,42 @@ const ClientBookingPage: React.FC = () => {
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [bookedTimes, setBookedTimes] = useState<{ [key: string]: string[] }>({});
 
+  useEffect(() => {
+    const fetchBookings = async () => {
+      try {
+        const response = await fetch('/api/appointments');
+        if (!response.ok) {
+          throw new Error('Failed to fetch appointments');
+        }
+
+        const bookings = await response.json();
+
+        const formattedBookings: { [key: string]: string[] } = {};
+
+        bookings.forEach((booking: { bookedTime: string }) => {
+          const localDateTime = toZonedTime(parseISO(booking.bookedTime), Intl.DateTimeFormat().resolvedOptions().timeZone);
+          const dateString = format(localDateTime, 'yyyy-MM-dd');
+          const timeString = format(localDateTime, 'HH:mm');
+          
+          if (formattedBookings[dateString]) {
+            formattedBookings[dateString].push(timeString);
+          } else {
+            formattedBookings[dateString] = [timeString];
+          }
+        });
+
+        setBookedTimes(formattedBookings);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchBookings();
+  }, []);
+
   const handleBooking = (date: Date, time: string) => {
-    // Update booked times for the selected date
     setBookedTimes(prev => {
-      const dateString = date.toISOString().split('T')[0];
+      const dateString = format(date, 'yyyy-MM-dd');
       return {
         ...prev,
         [dateString]: [...(prev[dateString] || []), time]
@@ -41,7 +75,7 @@ const ClientBookingPage: React.FC = () => {
             <TimeSlots
               selectedDate={selectedDate}
               onSelectTime={setSelectedTime}
-              bookedTimes={bookedTimes[selectedDate.toISOString().split('T')[0]] || []}
+              bookedTimes={bookedTimes[format(selectedDate, 'yyyy-MM-dd')] || []}
             />
           </div>
           <div className='w-1/4'>
@@ -49,7 +83,7 @@ const ClientBookingPage: React.FC = () => {
               date={selectedDate}
               time={selectedTime}
               onBooking={handleBooking}
-              bookedTimes={bookedTimes[selectedDate.toISOString().split('T')[0]] || []}
+              bookedTimes={bookedTimes[format(selectedDate, 'yyyy-MM-dd')] || []}
               onTimeBooked={handleTimeBooked}
             />
           </div>

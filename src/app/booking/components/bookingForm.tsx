@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
-import TimeSlots from './timeSlots';  // Import TimeSlots component
 
 const SERVICE_PRICES = {
   haircut: 25,
@@ -19,8 +18,8 @@ interface BookingFormProps {
   date: Date | null;
   time: string | null;
   onBooking: (date: Date, time: string) => void;
-  bookedTimes: string[]; // Passed from parent component
-  onTimeBooked: (time: string) => void; // Callback to handle time booking
+  bookedTimes: string[];
+  onTimeBooked: (time: string) => void;
 }
 
 const BookingForm: React.FC<BookingFormProps> = ({ date, time, onBooking, bookedTimes, onTimeBooked }) => {
@@ -92,12 +91,15 @@ const BookingForm: React.FC<BookingFormProps> = ({ date, time, onBooking, booked
 
     if (paymentSucceeded) {
       try {
+        const formattedDate = format(date, 'yyyy-MM-dd');
+        const formattedTime = format(new Date(`2000-01-01T${time}`), 'HH:mm:ss');
+
         const response = await fetch('/api/book', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            date: format(date, 'yyyy-MM-dd'),
-            time,
+            date: formattedDate,
+            time: formattedTime,
             name,
             phone,
             email,
@@ -108,8 +110,8 @@ const BookingForm: React.FC<BookingFormProps> = ({ date, time, onBooking, booked
 
         if (response.ok) {
           setBookingSuccess(true);
-          onTimeBooked(time);  // Add the booked time to the blocked timeslots
-          onBooking(date!, time); // Confirm booking
+          onTimeBooked(time);
+          onBooking(date, time);
           resetForm();
         } else {
           const { error } = await response.json();

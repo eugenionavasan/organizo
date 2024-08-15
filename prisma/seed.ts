@@ -7,35 +7,35 @@ async function main() {
   // Creates 5 Services
   const haircut = await prisma.service.create({
     data: {
-      name: 'Haircut',
+      name: 'haircut',
       price: 25.00,
     },
   });
 
   const hairColoring = await prisma.service.create({
     data: {
-      name: 'Hair Coloring',
+      name: 'haircoloring',
       price: 60.00,
     },
   });
 
   const hairWashing = await prisma.service.create({
     data: {
-      name: 'Hair Washing',
+      name: 'hairwashing',
       price: 15.00,
     },
   });
 
   const beardTrim = await prisma.service.create({
     data: {
-      name: 'Beard Trim',
+      name: 'beardtrim',
       price: 20.00,
     },
   });
 
   const scalpMassage = await prisma.service.create({
     data: {
-      name: 'Scalp Massage',
+      name: 'scalpmassage',
       price: 30.00,
     },
   });
