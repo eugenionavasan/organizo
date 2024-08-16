@@ -7,14 +7,24 @@ import {
   eachDayOfInterval,
   isToday,
 } from 'date-fns';
-import CalendarHeader from './CalendarHeader'; // Import the Client Component
+import CalendarHeader from './CalendarHeader';
+import { cookies } from 'next/headers';
 
 // Initialize Prisma Client
 const prisma = new PrismaClient();
 
 // Fetch booking data
-const fetchBookings = async () => {
+const fetchBookings = async (year: number, month: number) => {
+  const start = startOfMonth(new Date(year, month - 1));
+  const end = endOfMonth(start);
+
   return await prisma.booking.findMany({
+    where: {
+      bookedTime: {
+        gte: start,
+        lte: end,
+      },
+    },
     include: {
       service: {
         select: {
@@ -30,18 +40,30 @@ const fetchBookings = async () => {
   });
 };
 
-// Calendar page component
-export default async function CalendarPage() {
-  const bookings = await fetchBookings();
+// Define the type for formattedBookings
+type FormattedBookings = {
+  [key: string]: { time: string; service: string; customer: string }[];
+};
+
+interface CalendarPageProps {
+  searchParams: { year: string; month: string };
+}
+
+export default async function CalendarPage({
+  searchParams,
+}: CalendarPageProps) {
+  const year = parseInt(
+    searchParams.year || new Date().getFullYear().toString()
+  );
+  const month = parseInt(
+    searchParams.month || (new Date().getMonth() + 1).toString()
+  );
+
+  const bookings = await fetchBookings(year, month);
 
   // Format bookings into a calendar-friendly format
-  const formattedBookings = bookings.reduce(
-    (
-      acc: {
-        [key: string]: { time: string; service: string; customer: string }[];
-      },
-      booking
-    ) => {
+  const formattedBookings: FormattedBookings = bookings.reduce(
+    (acc, booking) => {
       const date = format(new Date(booking.bookedTime), 'yyyy-MM-dd');
       const time = format(new Date(booking.bookedTime), 'HH:mm');
 
@@ -56,19 +78,18 @@ export default async function CalendarPage() {
       });
       return acc;
     },
-    {}
+    {} as FormattedBookings
   );
 
-  const today = new Date();
-  const start = startOfMonth(today);
-  const end = endOfMonth(today);
+  const start = startOfMonth(new Date(year, month - 1));
+  const end = endOfMonth(start);
   const days = eachDayOfInterval({ start, end });
 
   return (
     <Layout>
       <div className='p-5 bg-gray-100 font-sans'>
         <h1 className='text-2xl font-bold mb-4'>Booking Calendar</h1>
-        <CalendarHeader />
+        <CalendarHeader year={year} month={month} />
         <div className='grid grid-cols-7 gap-4'>
           {days.map((day) => {
             const dayString = format(day, 'yyyy-MM-dd');

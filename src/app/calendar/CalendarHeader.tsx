@@ -1,20 +1,28 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
+import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 
-const CalendarHeader: React.FC = () => {
-  const [month, setMonth] = useState<number>(new Date().getMonth() + 1); // 1-based month
-  const [year, setYear] = useState<number>(new Date().getFullYear());
+const CalendarHeader: React.FC<{ year: number; month: number }> = ({
+  year,
+  month,
+}) => {
+  const router = useRouter();
 
   const handleMonthChange = (direction: 'prev' | 'next') => {
+    let newMonth = month;
+    let newYear = year;
+
     if (direction === 'prev') {
-      setMonth(month === 1 ? 12 : month - 1);
-      if (month === 1) setYear(year - 1);
+      newMonth = month === 1 ? 12 : month - 1;
+      if (month === 1) newYear -= 1;
     } else {
-      setMonth(month === 12 ? 1 : month + 1);
-      if (month === 12) setYear(year + 1);
+      newMonth = month === 12 ? 1 : month + 1;
+      if (month === 12) newYear += 1;
     }
+
+    router.push(`/calendar?year=${newYear}&month=${newMonth}`);
   };
 
   return (
