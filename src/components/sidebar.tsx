@@ -3,15 +3,15 @@
 import { UserButton } from '@clerk/nextjs';
 import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  CalendarIcon,
+  DocumentDuplicateIcon,
+  HomeIcon,
+  UserGroupIcon,
+} from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
-import {
-  UserGroupIcon,
-  HomeIcon,
-  DocumentDuplicateIcon,
-  CalendarIcon,
-} from '@heroicons/react/24/outline';
 
 export const Sidebar = () => {
   const pathname = usePathname();
