@@ -6,6 +6,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
+import {
+  UserGroupIcon,
+  HomeIcon,
+  DocumentDuplicateIcon,
+  CalendarIcon,
+} from '@heroicons/react/24/outline';
 
 export const Sidebar = () => {
   const pathname = usePathname();
@@ -35,51 +41,58 @@ export const Sidebar = () => {
       <nav className={`flex-1 px-4 ${isCollapsed ? 'hidden' : ''}`}>
         <ul className='space-y-2'>
           <li>
-            <Link href='/dashboard'>
-              <a
-                className={`block py-2.5 px-4 rounded ${
-                  pathname === '/dashboard' ? 'bg-gray-700' : ''
-                }`}
-              >
+            <Link
+              href='/dashboard'
+              className={` block py-2.5 px-4 rounded hover:scale-105 ${
+                pathname === '/dashboard' ? 'bg-gray-700' : ''
+              }`}
+            >
+              <div className='flex flex-row'>
+                <HomeIcon className='w-5' />
                 Dashboard
-              </a>
+              </div>
             </Link>
           </li>
           <li>
-            <Link href='/customers'>
-              <a
-                className={`block py-2.5 px-4 rounded ${
-                  pathname === '/customers' ? 'bg-gray-700' : ''
-                }`}
-              >
+            <Link
+              href='/customers'
+              className={`block py-2.5 px-4 rounded hover:scale-105 ${
+                pathname === '/customers' ? 'bg-gray-700' : ''
+              }`}
+            >
+              <div className='flex flex-row'>
+                <UserGroupIcon className='w-5' />
                 Customers
-              </a>
+              </div>
             </Link>
           </li>
           <li>
-            <Link href='/booking'>
-              <a
-                className={`block py-2.5 px-4 rounded ${
-                  pathname === '/booking' ? 'bg-gray-700' : ''
-                }`}
-              >
-                Booking
-              </a>
+            <Link
+              href='/booking'
+              className={`block py-2.5 px-4 rounded hover:scale-105 ${
+                pathname === '/booking' ? 'bg-gray-700' : ''
+              }`}
+            >
+              <div className='flex flex-row'>
+                <DocumentDuplicateIcon className='w-5' /> Booking
+              </div>
             </Link>
           </li>
           <li>
-            <Link href='/calendar'>
-              <a
-                className={`block py-2.5 px-4 rounded ${
-                  pathname === '/calendar' ? 'bg-gray-700' : ''
-                }`}
-              >
+            <Link
+              href='/calendar'
+              className={`block py-2.5 px-4 rounded  hover:scale-105${
+                pathname === '/calendar' ? 'bg-gray-700' : ''
+              }`}
+            >
+              <div className='flex flex-row'>
+                <CalendarIcon className='w-5' />
                 Calendar
-              </a>
+              </div>
             </Link>
           </li>
         </ul>
-        <div className='p-4 flex items-center space-x-4'>
+        <div className='p-4 flex items-center space-x-4 hover:scale-105'>
           <div className='flex items-center'>
             <UserButton />
             {!isCollapsed && (
