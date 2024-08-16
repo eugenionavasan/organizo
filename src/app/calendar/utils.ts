@@ -49,3 +49,23 @@ export const formatBookings = (
     return acc;
   }, {} as FormattedBookings);
 };
+
+export const handleMonthChange = (
+  direction: 'prev' | 'next',
+  year: number,
+  month: number,
+  router: any
+) => {
+  let newMonth = month;
+  let newYear = year;
+
+  if (direction === 'prev') {
+    newMonth = month === 1 ? 12 : month - 1;
+    if (month === 1) newYear -= 1;
+  } else {
+    newMonth = month === 12 ? 1 : month + 1;
+    if (month === 12) newYear += 1;
+  }
+
+  router.push(`/calendar?year=${newYear}&month=${newMonth}`);
+};
