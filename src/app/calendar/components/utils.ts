@@ -50,6 +50,7 @@ export const formatBookings = (
   }, {} as FormattedBookings);
 };
 
+//handle month selection
 export const handleMonthChange = (
   direction: 'prev' | 'next',
   year: number,
