@@ -27,12 +27,13 @@ export default function RevenueGraph() {
   const handleNext = () => {
     setCurrentGraphIndex((prev) => (prev === graphTypes.length - 1 ? 0 : prev + 1));
   };
+  const currencyFormatter = (value: number) => `$${value.toLocaleString()}`;
 
   return (
     <div className="relative flex items-center mt-6">
       
 
-      <div className="w-full md:w-3/4 h-64">
+      <div className="pl-5 w-full md:w-3/4 h-64">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={data}
@@ -40,8 +41,8 @@ export default function RevenueGraph() {
           >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
+            <YAxis tickFormatter={currencyFormatter} />
+            <Tooltip formatter={(value: number) => currencyFormatter(value)} />
             <Legend />
             <Line
               type="monotone"
