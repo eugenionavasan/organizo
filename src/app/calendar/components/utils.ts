@@ -1,4 +1,4 @@
-import { startOfMonth, endOfMonth, format } from 'date-fns';
+import { eachDayOfInterval, startOfMonth, endOfMonth, format } from 'date-fns';
 import { prisma } from './prismaClient';
 import { FormattedBookings } from './types';
 
@@ -69,4 +69,16 @@ export const handleMonthChange = (
   }
 
   router.push(`/calendar?year=${newYear}&month=${newMonth}`);
+};
+
+// Function to handle the logic in CalendarPage
+export const getCalendarData = async (year: number, month: number) => {
+  const bookings = await fetchBookings(year, month);
+  const formattedBookings: FormattedBookings = formatBookings(bookings);
+
+  const start = startOfMonth(new Date(year, month - 1));
+  const end = endOfMonth(start);
+  const days = eachDayOfInterval({ start, end });
+
+  return { days, formattedBookings };
 };

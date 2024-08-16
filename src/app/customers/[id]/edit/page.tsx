@@ -1,5 +1,3 @@
-// src/app/customers/[id]/edit/page.tsx
-
 import { PrismaClient } from '@prisma/client';
 import { redirect } from 'next/navigation';
 

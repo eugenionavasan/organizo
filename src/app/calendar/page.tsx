@@ -1,31 +1,16 @@
-import {
-  eachDayOfInterval,
-  endOfMonth,
-  format,
-  isToday,
-  startOfMonth,
-} from 'date-fns';
+import { format, isToday } from 'date-fns';
 import Layout from '../../components/layout';
 import CalendarHeader from './CalendarHeader';
-import { CalendarPageProps, FormattedBookings } from './components/types';
-import { fetchBookings, formatBookings } from './components/utils';
+import { CalendarPageProps } from './components/types';
+import { getCalendarData } from './components/utils';
 
 export default async function CalendarPage({
   searchParams,
 }: CalendarPageProps) {
-  const year = parseInt(
-    searchParams.year || new Date().getFullYear().toString()
-  );
-  const month = parseInt(
-    searchParams.month || (new Date().getMonth() + 1).toString()
-  );
+  const year = parseInt(searchParams.year || `${new Date().getFullYear()}`);
+  const month = parseInt(searchParams.month || `${new Date().getMonth() + 1}`);
 
-  const bookings = await fetchBookings(year, month);
-  const formattedBookings: FormattedBookings = formatBookings(bookings);
-
-  const start = startOfMonth(new Date(year, month - 1));
-  const end = endOfMonth(start);
-  const days = eachDayOfInterval({ start, end });
+  const { days, formattedBookings } = await getCalendarData(year, month);
 
   return (
     <Layout>
