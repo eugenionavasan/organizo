@@ -1,5 +1,5 @@
 // utils.test.ts
-import { handleMonthChange } from '../utils';
+import { handleMonthChange } from '../components/utils';
 
 describe('handleMonthChange', () => {
   const mockRouter = { push: jest.fn() };

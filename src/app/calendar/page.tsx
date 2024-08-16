@@ -1,14 +1,14 @@
-import Layout from '../../components/layout';
 import {
-  startOfMonth,
-  endOfMonth,
   eachDayOfInterval,
-  isToday,
+  endOfMonth,
   format,
+  isToday,
+  startOfMonth,
 } from 'date-fns';
+import Layout from '../../components/layout';
 import CalendarHeader from './CalendarHeader';
-import { fetchBookings, formatBookings } from './utils';
-import { CalendarPageProps, FormattedBookings } from './types';
+import { CalendarPageProps, FormattedBookings } from './components/types';
+import { fetchBookings, formatBookings } from './components/utils';
 
 export default async function CalendarPage({
   searchParams,

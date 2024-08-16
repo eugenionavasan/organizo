@@ -1,9 +1,9 @@
 'use client';
 
-import React from 'react';
-import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
-import { handleMonthChange } from './utils';
+import { useRouter } from 'next/navigation';
+import React from 'react';
+import { handleMonthChange } from './components/utils';
 
 const CalendarHeader: React.FC<{ year: number; month: number }> = ({
   year,
