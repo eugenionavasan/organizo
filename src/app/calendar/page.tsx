@@ -1,53 +1,14 @@
-import { PrismaClient } from '@prisma/client';
 import Layout from '../../components/layout';
 import {
-  format,
   startOfMonth,
   endOfMonth,
   eachDayOfInterval,
   isToday,
+  format,
 } from 'date-fns';
 import CalendarHeader from './CalendarHeader';
-import { cookies } from 'next/headers';
-
-// Initialize Prisma Client
-const prisma = new PrismaClient();
-
-// Fetch booking data
-const fetchBookings = async (year: number, month: number) => {
-  const start = startOfMonth(new Date(year, month - 1));
-  const end = endOfMonth(start);
-
-  return await prisma.booking.findMany({
-    where: {
-      bookedTime: {
-        gte: start,
-        lte: end,
-      },
-    },
-    include: {
-      service: {
-        select: {
-          name: true,
-        },
-      },
-      customer: {
-        select: {
-          name: true,
-        },
-      },
-    },
-  });
-};
-
-// Define the type for formattedBookings
-type FormattedBookings = {
-  [key: string]: { time: string; service: string; customer: string }[];
-};
-
-interface CalendarPageProps {
-  searchParams: { year: string; month: string };
-}
+import { fetchBookings, formatBookings } from './utils';
+import { CalendarPageProps, FormattedBookings } from './types';
 
 export default async function CalendarPage({
   searchParams,
@@ -60,26 +21,7 @@ export default async function CalendarPage({
   );
 
   const bookings = await fetchBookings(year, month);
-
-  // Format bookings into a calendar-friendly format
-  const formattedBookings: FormattedBookings = bookings.reduce(
-    (acc, booking) => {
-      const date = format(new Date(booking.bookedTime), 'yyyy-MM-dd');
-      const time = format(new Date(booking.bookedTime), 'HH:mm');
-
-      if (!acc[date]) {
-        acc[date] = [];
-      }
-
-      acc[date].push({
-        time,
-        service: booking.service.name,
-        customer: booking.customer.name,
-      });
-      return acc;
-    },
-    {} as FormattedBookings
-  );
+  const formattedBookings: FormattedBookings = formatBookings(bookings);
 
   const start = startOfMonth(new Date(year, month - 1));
   const end = endOfMonth(start);
@@ -94,7 +36,7 @@ export default async function CalendarPage({
           {days.map((day) => {
             const dayString = format(day, 'yyyy-MM-dd');
             const dayBookings = (formattedBookings[dayString] || []).sort(
-              (a, b) => a.time.localeCompare(b.time) // Sort by time
+              (a, b) => a.time.localeCompare(b.time)
             );
             const isTodayClass = isToday(day) ? 'bg-blue-100' : '';
 
