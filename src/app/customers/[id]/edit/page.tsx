@@ -56,7 +56,9 @@ const EditCustomerPage = ({ params }: { params: { id: string } }) => {
       });
 
       if (response.ok) {
-        router.push('/customers');
+        //router.push('/customers');
+        router.refresh();
+        router.back();
       } else {
         console.error('Failed to update customer');
       }
