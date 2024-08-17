@@ -29,52 +29,40 @@ export default async function CustomerListPage() {
 
   return (
     <Layout>
-      <div style={{ padding: '20px' }}>
-        <h1>Customer List</h1>
-        <table
-          style={{
-            width: '100%',
-            borderCollapse: 'collapse',
-            marginTop: '20px',
-          }}
-        >
+      <div className='p-5'>
+        <h1 className='text-2xl font-bold mb-4'>Customer List</h1>
+        <table className='w-full border-collapse mt-5'>
           <thead>
             <tr>
-              <th style={{ border: '1px solid #ddd', padding: '8px' }}>Name</th>
-              <th style={{ border: '1px solid #ddd', padding: '8px' }}>
+              <th className='border border-gray-300 px-4 py-2 text-left'>
+                Name
+              </th>
+              <th className='border border-gray-300 px-4 py-2 text-left'>
                 Telephone
               </th>
-              <th style={{ border: '1px solid #ddd', padding: '8px' }}>
+              <th className='border border-gray-300 px-4 py-2 text-left'>
                 Service
               </th>
-              <th style={{ border: '1px solid #ddd', padding: '8px' }}>
+              <th className='border border-gray-300 px-4 py-2 text-left'>
                 Actions
               </th>
             </tr>
           </thead>
           <tbody>
             {formattedCustomers.map((customer) => (
-              <tr key={customer.id}>
-                <td style={{ border: '1px solid #ddd', padding: '8px' }}>
+              <tr key={customer.id} className='hover:bg-gray-100'>
+                <td className='border border-gray-300 px-4 py-2'>
                   {customer.name}
                 </td>
-                <td style={{ border: '1px solid #ddd', padding: '8px' }}>
+                <td className='border border-gray-300 px-4 py-2'>
                   {customer.phone}
                 </td>
-                <td style={{ border: '1px solid #ddd', padding: '8px' }}>
+                <td className='border border-gray-300 px-4 py-2'>
                   {customer.service}
                 </td>
-                <td style={{ border: '1px solid #ddd', padding: '8px' }}>
+                <td className='border border-gray-300 px-4 py-2'>
                   <Link href={`/customers/${customer.id}/edit`}>
-                    <button
-                      style={{
-                        padding: '5px 10px',
-                        backgroundColor: '#0070f3',
-                        color: 'white',
-                        border: 'none',
-                        cursor: 'pointer',
-                      }}
-                    >
+                    <button className='px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-700'>
                       Edit
                     </button>
                   </Link>

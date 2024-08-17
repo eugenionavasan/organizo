@@ -8,8 +8,8 @@ const inter = Inter({ subsets: ['latin'] });
 const dmSans = DM_Sans({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: "Organizo",
-  description: "Template created by Frontend Tribe",
+  title: 'Organizo',
+  description: 'Organizes and saves time',
 };
 
 export default function RootLayout({
