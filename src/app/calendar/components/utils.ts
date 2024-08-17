@@ -1,5 +1,5 @@
 import { eachDayOfInterval, startOfMonth, endOfMonth, format } from 'date-fns';
-import { prisma } from './prismaClient';
+import prisma from '../../../components/prismaClient';
 import { FormattedBookings } from './types';
 
 // Fetch booking data
