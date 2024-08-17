@@ -43,12 +43,12 @@ export const Sidebar = () => {
           <li>
             <Link
               href='/dashboard'
-              className={` block py-2.5 px-4 rounded hover:scale-105 ${
+              className={`block py-2.5 px-4 rounded hover:scale-105 ${
                 pathname === '/dashboard' ? 'bg-gray-700' : ''
               }`}
             >
-              <div className='flex flex-row'>
-                <HomeIcon className='w-5' />
+              <div className='flex flex-row items-center'>
+                <HomeIcon className='w-5 mr-2' />
                 Dashboard
               </div>
             </Link>
@@ -60,8 +60,8 @@ export const Sidebar = () => {
                 pathname === '/customers' ? 'bg-gray-700' : ''
               }`}
             >
-              <div className='flex flex-row'>
-                <UserGroupIcon className='w-5' />
+              <div className='flex flex-row items-center'>
+                <UserGroupIcon className='w-5 mr-2' />
                 Customers
               </div>
             </Link>
@@ -73,26 +73,27 @@ export const Sidebar = () => {
                 pathname === '/booking' ? 'bg-gray-700' : ''
               }`}
             >
-              <div className='flex flex-row'>
-                <DocumentDuplicateIcon className='w-5' /> Booking
+              <div className='flex flex-row items-center'>
+                <DocumentDuplicateIcon className='w-5 mr-2' />
+                Booking
               </div>
             </Link>
           </li>
           <li>
             <Link
               href='/calendar'
-              className={`block py-2.5 px-4 rounded  hover:scale-105${
+              className={`block py-2.5 px-4 rounded hover:scale-105 ${
                 pathname === '/calendar' ? 'bg-gray-700' : ''
               }`}
             >
-              <div className='flex flex-row'>
-                <CalendarIcon className='w-5' />
+              <div className='flex flex-row items-center'>
+                <CalendarIcon className='w-5 mr-2' />
                 Calendar
               </div>
             </Link>
           </li>
         </ul>
-        <div className='p-4 flex items-center space-x-4 hover:scale-105'>
+        <div className='p-4 flex items-center hover:scale-105'>
           <div className='flex items-center'>
             <UserButton />
             {!isCollapsed && (
