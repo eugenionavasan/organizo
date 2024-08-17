@@ -1,7 +1,7 @@
-import { PrismaClient } from '@prisma/client';
-import { redirect } from 'next/navigation';
+'use client';
 
-const prisma = new PrismaClient();
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 type Customer = {
   id: string;
@@ -10,36 +10,78 @@ type Customer = {
   email: string;
 };
 
-async function getCustomerData(id: string): Promise<Customer | null> {
-  return await prisma.customer.findUnique({
-    where: { id },
-    select: {
-      id: true,
-      name: true,
-      phone: true,
-      email: true,
-    },
-  });
-}
+const EditCustomerPage = ({ params }: { params: { id: string } }) => {
+  const [customer, setCustomer] = useState<Customer | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
-const EditCustomerPage = async ({ params }: { params: { id: string } }) => {
-  const customer = await getCustomerData(params.id);
+  useEffect(() => {
+    const fetchCustomer = async () => {
+      try {
+        console.log('Fetching customer with ID:', params.id);
+        const response = await fetch(`/api/customers/${params.id}`);
+        console.log('Response status:', response.status);
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Fetched customer data:', data);
+          setCustomer(data);
+        } else {
+          console.error('Failed to fetch customer');
+          setError('Failed to fetch customer');
+        }
+      } catch (error) {
+        console.error('Error fetching customer:', error);
+        setError('Error fetching customer');
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  if (!customer) {
-    redirect('/customers');
-  }
+    fetchCustomer();
+  }, [params.id]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!customer) return;
+
+    try {
+      const response = await fetch(`/api/customers/${customer.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(customer),
+      });
+
+      if (response.ok) {
+        router.push('/customers');
+      } else {
+        console.error('Failed to update customer');
+      }
+    } catch (error) {
+      console.error('Error updating customer:', error);
+    }
+  };
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+  if (!customer) return <div>Customer not found</div>;
 
   return (
     <div style={{ padding: '20px' }}>
       <h1>Edit Customer</h1>
-      <form action={`/api/customers/${customer.id}`} method='POST'>
+      <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: '20px' }}>
           <label>
             Name:
             <input
               type='text'
-              name='name'
-              defaultValue={customer.name}
+              value={customer.name}
+              onChange={(e) =>
+                setCustomer({ ...customer, name: e.target.value })
+              }
               style={{ marginLeft: '10px', padding: '5px', width: '300px' }}
             />
           </label>
@@ -49,8 +91,10 @@ const EditCustomerPage = async ({ params }: { params: { id: string } }) => {
             Telephone:
             <input
               type='text'
-              name='phone'
-              defaultValue={customer.phone}
+              value={customer.phone}
+              onChange={(e) =>
+                setCustomer({ ...customer, phone: e.target.value })
+              }
               style={{ marginLeft: '10px', padding: '5px', width: '300px' }}
             />
           </label>
@@ -60,8 +104,10 @@ const EditCustomerPage = async ({ params }: { params: { id: string } }) => {
             Email:
             <input
               type='text'
-              name='email'
-              defaultValue={customer.email}
+              value={customer.email}
+              onChange={(e) =>
+                setCustomer({ ...customer, email: e.target.value })
+              }
               style={{ marginLeft: '10px', padding: '5px', width: '300px' }}
             />
           </label>
