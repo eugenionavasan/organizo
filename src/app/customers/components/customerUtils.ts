@@ -27,3 +27,44 @@ export const fetchCustomers = async (): Promise<FormattedCustomer[]> => {
     service: customer.bookings[0]?.service.name || 'No service booked',
   }));
 };
+
+// Fetch a customer by ID
+import { Customer } from './types';
+
+export const fetchCustomer = async (id: string): Promise<Customer | null> => {
+  try {
+    const response = await fetch(`/api/customers/${id}`);
+    if (response.ok) {
+      return await response.json();
+    } else {
+      console.error('Failed to fetch customer');
+      return null;
+    }
+  } catch (error) {
+    console.error('Error fetching customer:', error);
+    return null;
+  }
+};
+
+// Update a customer
+export const updateCustomer = async (customer: Customer): Promise<boolean> => {
+  try {
+    const response = await fetch(`/api/customers/${customer.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(customer),
+    });
+
+    if (response.ok) {
+      return true;
+    } else {
+      console.error('Failed to update customer');
+      return false;
+    }
+  } catch (error) {
+    console.error('Error updating customer:', error);
+    return false;
+  }
+};

@@ -4,3 +4,10 @@ export type FormattedCustomer = {
   phone: string;
   service: string;
 };
+
+export type Customer = {
+  id: string;
+  name: string;
+  phone: string;
+  email: string;
+};
