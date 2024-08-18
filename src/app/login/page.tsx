@@ -3,7 +3,7 @@ import { SignIn, useAuth } from '@clerk/nextjs';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-const LoginPage: React.FC = () => {
+const LoginPage = () => {
   const { isSignedIn } = useAuth();
   const router = useRouter();
 
