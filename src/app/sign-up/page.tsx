@@ -4,8 +4,9 @@ import { SignUp } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-const SignUpPage: React.FC = () => {
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+const SignUpPage = () => {
+  // Initialize errorMessage with an empty string
+  const [errorMessage, setErrorMessage] = useState<string>('');
   const router = useRouter();
 
   // Redirect to dashboard if user is already signed in
@@ -13,7 +14,7 @@ const SignUpPage: React.FC = () => {
     // Replace with your own method to check if user is authenticated
     const checkUser = async () => {
       try {
-        const response = await fetch('/api/auth/check'); // Adjust based on your auth API
+        const response = await fetch('/api/auth/check');
         if (response.ok) {
           router.push('/dashboard');
         }
