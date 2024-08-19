@@ -1,5 +1,3 @@
-// components/BookingForm.tsx
-import React from 'react';
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
 import { BookingFormProps, ServiceType } from '../types/types';
 import { SERVICE_PRICES } from '../constants/constants';
@@ -8,7 +6,7 @@ import { FormInput } from './formInput';
 import { FormSelect } from './formSelect';
 import { PaymentSection } from './paymentSection';
 import { useBookingForm } from '../hooks/useBookingForm';
-import { processPayment, bookAppointment } from '../helpers/functions';
+import { processPayment, bookAppointment } from '../helpers/BookingFormHelpers';
 
 export const BookingForm: React.FC<BookingFormProps> = ({ date, time, onBooking, onTimeBooked }) => {
   const {
