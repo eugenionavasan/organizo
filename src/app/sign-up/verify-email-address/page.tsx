@@ -6,7 +6,6 @@ const VerifyEmailPage = () => {
   const router = useRouter();
 
   useEffect(() => {
-    // Redirect to login or another page after email verification
     console.log('Redirecting to login...');
     router.push('/login');
   }, [router]);

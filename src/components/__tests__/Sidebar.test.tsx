@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { Sidebar } from './sidebar';
+import { Sidebar } from '../sidebar';
 import { usePathname } from 'next/navigation';
 
 // Mock the next/navigation module

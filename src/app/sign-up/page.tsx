@@ -12,7 +12,7 @@ const SignUpPage = () => {
         path='/sign-up'
         routing='path'
         signInUrl='/login'
-        forceRedirectUrl='/dashboard' // Changed from forceRedirectUrl
+        forceRedirectUrl='/dashboard'
       />
     </div>
   );
