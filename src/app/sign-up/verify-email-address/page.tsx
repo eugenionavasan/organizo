@@ -2,7 +2,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
-const VerifyEmailPage: React.FC = () => {
+const VerifyEmailPage = () => {
   const router = useRouter();
 
   useEffect(() => {
@@ -12,16 +12,7 @@ const VerifyEmailPage: React.FC = () => {
   }, [router]);
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-        padding: '20px',
-        backgroundColor: '#f0f0f0',
-      }}
-    >
+    <div className='flex justify-center items-center h-screen p-5 bg-gray-100'>
       <p>Verifying your email address...</p>
     </div>
   );

@@ -14,16 +14,7 @@ const LoginPage = () => {
   }, [isSignedIn, router]);
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-        padding: '20px',
-        backgroundColor: '#f0f0f0',
-      }}
-    >
+    <div className='flex justify-center items-center h-screen p-5 bg-gray-100'>
       <SignIn
         path='/login'
         routing='path'
