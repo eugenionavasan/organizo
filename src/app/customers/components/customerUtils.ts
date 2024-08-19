@@ -1,4 +1,4 @@
-import prisma from '../../../components/prismaClient';
+import prisma from '../../../lib/prismaClient';
 import { FormattedCustomer } from './types';
 
 // Fetch customers and their latest bookings

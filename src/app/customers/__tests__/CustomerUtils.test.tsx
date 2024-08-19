@@ -1,11 +1,11 @@
+import prisma from '../../../lib/prismaClient';
 import {
-  fetchCustomers,
   fetchCustomer,
+  fetchCustomers,
   updateCustomer,
 } from '../components/customerUtils';
-import prisma from '../../../components/prismaClient';
 
-jest.mock('../../../components/prismaClient', () => ({
+jest.mock('../../../lib/prismaClient', () => ({
   customer: {
     findMany: jest.fn(),
   },
