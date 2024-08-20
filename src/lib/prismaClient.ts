@@ -1,5 +1,7 @@
-import { PrismaClient } from '@prisma/client';
+//removing this file, for deployment to vercel we are using prisma.ts file
 
-const prisma = new PrismaClient();
+// import { PrismaClient } from '@prisma/client';
 
-export default prisma;
+// const prisma = new PrismaClient();
+
+// export default prisma;
