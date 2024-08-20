@@ -1,12 +1,12 @@
 'use client'
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const TimeSlots: React.FC<{ 
   selectedDate: Date; 
   onSelectTime: (time: string) => void;
   bookedTimes: string[];
-}> = ({ selectedDate, onSelectTime, bookedTimes }) => {
+}> = ({ onSelectTime, bookedTimes }) => {
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
 
   const generateTimeSlots = () => {
