@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import Appointment from './appointment';
 import { AppointmentProps } from '../lib/types'
 const appointments: AppointmentProps[] = [
@@ -58,10 +59,37 @@ const appointments: AppointmentProps[] = [
   ];
   
   export default function UpcomingAppointments() {
-    const sortedAppointments = [...appointments].sort(
-      (a, b) => new Date(a.appointmentDate).getTime() - new Date(b.appointmentDate).getTime()
-    );
-  
+    // const sortedAppointments = [...appointments].sort(
+    //   (a, b) => new Date(a.appointmentDate).getTime() - new Date(b.appointmentDate).getTime()
+    // );
+
+    const [appointments, setAppointments] = useState<AppointmentProps[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        async function fetchAppointments() {
+          try {
+            const response = await fetch('/api/appointments');
+            const data: AppointmentProps[] = await response.json();
+            setAppointments(data);
+          } catch (error) {
+            console.error('Error fetching appointments:', error);
+          } finally {
+            setLoading(false);
+          }
+        }
+    
+        fetchAppointments();
+      }, []);
+    
+      if (loading) {
+        return <div>Loading...</div>; 
+      }
+
+      const sortedAppointments = [...appointments].sort(
+        (a, b) => new Date(a.appointmentDate).getTime() - new Date(b.appointmentDate).getTime()
+      );
+
     return (
       <div className="w-full max-w-md bg-white rounded-lg shadow-md p-3 overflow-y-auto h-full">
           <div className="sticky top-0 bg-white p-4 border-b z-10 hover:scale-105">

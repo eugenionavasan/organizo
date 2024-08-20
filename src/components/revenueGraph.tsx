@@ -1,5 +1,4 @@
-"use client";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   LineChart,
   Line,
@@ -10,15 +9,34 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
-import { revenueData } from '../lib/mockData';
+// import { revenueData } from '../lib/mockData';
 
 const graphTypes = ['weekly', 'monthly', 'yearly', 'total'] as const;
 
 export default function RevenueGraph() {
   const [currentGraphIndex, setCurrentGraphIndex] = useState(0);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const currentGraphType = graphTypes[currentGraphIndex];
-  const data = revenueData[currentGraphType];
+
+//   const data = revenueData[currentGraphType];
+useEffect(() => {
+    async function fetchData() {
+      setLoading(true);
+      try {
+        const response = await fetch(`/api/revenue?type=${currentGraphType}`);
+        const result = await response.json();
+        setData(result);
+      } catch (error) {
+        console.error('Error fetching revenue data:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, [currentGraphType]);
 
   const handlePrev = () => {
     setCurrentGraphIndex((prev) => (prev === 0 ? graphTypes.length - 1 : prev - 1));
