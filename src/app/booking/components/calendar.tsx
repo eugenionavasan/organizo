@@ -1,9 +1,22 @@
-'use client'
+"use client";
 
-import React, { useState } from 'react';
-import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay, isPast, isToday } from 'date-fns';
+import React, { useState } from "react";
+import {
+  format,
+  startOfMonth,
+  endOfMonth,
+  startOfWeek,
+  endOfWeek,
+  addDays,
+  isSameMonth,
+  isSameDay,
+  isPast,
+  isToday,
+} from "date-fns";
 
-const Calendar: React.FC<{ onSelectDate: (date: Date) => void }> = ({ onSelectDate }) => {
+const Calendar: React.FC<{ onSelectDate: (date: Date) => void }> = ({
+  onSelectDate,
+}) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
 
@@ -12,7 +25,7 @@ const Calendar: React.FC<{ onSelectDate: (date: Date) => void }> = ({ onSelectDa
 
     return (
       <div className="flex justify-between items-center mb-4">
-        <button 
+        <button
           className="text-gray-600 hover:text-gray-800"
           onClick={() => setCurrentMonth(addDays(currentMonth, -30))}
         >
@@ -21,7 +34,7 @@ const Calendar: React.FC<{ onSelectDate: (date: Date) => void }> = ({ onSelectDa
         <span className="text-2xl font-bold">
           {format(currentMonth, dateFormat)}
         </span>
-        <button 
+        <button
           className="text-gray-600 hover:text-gray-800"
           onClick={() => setCurrentMonth(addDays(currentMonth, 30))}
         >
@@ -70,9 +83,13 @@ const Calendar: React.FC<{ onSelectDate: (date: Date) => void }> = ({ onSelectDa
               aspect-square flex items-center justify-center cursor-pointer text-2xl
               ${!isSameMonth(day, monthStart) ? "text-gray-400" : ""}
               ${isDisabled ? "text-gray-300 cursor-not-allowed" : ""}
-              ${isSameDay(day, selectedDate) && !isDisabled
-                ? "bg-blue-500 text-white rounded-full" 
-                : isDisabled ? "" : "hover:bg-gray-100 rounded-full"}
+              ${
+                isSameDay(day, selectedDate) && !isDisabled
+                  ? "bg-blue-500 text-white rounded-full"
+                  : isDisabled
+                  ? ""
+                  : "hover:bg-gray-100 rounded-full"
+              }
             `}
             key={day.toString()}
             onClick={() => !isDisabled && onDateClick(cloneDay)}
@@ -99,7 +116,7 @@ const Calendar: React.FC<{ onSelectDate: (date: Date) => void }> = ({ onSelectDa
   };
 
   return (
-    <div className="calendar bg-white p-6 rounded-lg shadow-md w-full aspect-square">
+    <div className="calendar bg-white p-6 rounded-lg shadow-md w-full aspect-square lg:w-3/4">
       {renderHeader()}
       {renderDays()}
       {renderCells()}
