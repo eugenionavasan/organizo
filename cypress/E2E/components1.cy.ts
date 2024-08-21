@@ -30,7 +30,7 @@ describe('Sign-In Page', () => {
       .and('have.attr', 'name', 'password');
 
     // Type the password of the existing account into the password input field
-    cy.get('input#password-field.cl-formFieldInput').type(''); // Add the password
+    cy.get('input#password-field.cl-formFieldInput').type('1d1ZI2n2'); // Add the password
 
     // Click the Continue button for the password
     cy.get('button.cl-formButtonPrimary').contains('Continue').click();
