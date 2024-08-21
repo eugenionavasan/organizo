@@ -163,7 +163,7 @@ function getDateRangeAndFormat(period: TimePeriod): { startDate: Date; endDate: 
       break;
     case 'fourMonths':
       startDate = startOfMonth(now);
-      endDate = addMonths(startDate, 4);
+      endDate = addMonths(startDate, 2);
       intervalString = 'month';
       formatString = 'MMM';
       break;

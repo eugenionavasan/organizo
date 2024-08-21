@@ -89,7 +89,7 @@ const Dashboard: React.FC = () => {
           className={`px-2 py-1 mr-2 rounded ${period === p ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
           onClick={() => setPeriod(p as TimePeriod)}
         >
-          {p === 'fourMonths' ? '5 months' : p.charAt(0).toUpperCase() + p.slice(1)}
+          {p === 'fourMonths' ? 'Trimester' : p.charAt(0).toUpperCase() + p.slice(1)}
         </button>
       ))}
     </div>
