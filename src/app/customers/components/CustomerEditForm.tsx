@@ -13,52 +13,48 @@ const CustomerEditForm: React.FC<CustomerEditFormProps> = ({
   onSubmit,
 }) => {
   return (
-    <form onSubmit={onSubmit}>
-      <div style={{ marginBottom: '20px' }}>
-        <label>
+    <form onSubmit={onSubmit} className="space-y-4 p-4 max-w-lg">
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700">
           Name:
           <input
-            type='text'
+            type="text"
             value={customer.name}
             onChange={(e) => onChange({ ...customer, name: e.target.value })}
-            style={{ marginLeft: '10px', padding: '5px', width: '300px' }}
+            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           />
         </label>
       </div>
-      <div style={{ marginBottom: '20px' }}>
-        <label>
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700">
           Telephone:
           <input
-            type='text'
+            type="text"
             value={customer.phone}
             onChange={(e) => onChange({ ...customer, phone: e.target.value })}
-            style={{ marginLeft: '10px', padding: '5px', width: '300px' }}
+            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           />
         </label>
       </div>
-      <div style={{ marginBottom: '20px' }}>
-        <label>
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700">
           Email:
           <input
-            type='text'
+            type="email"
             value={customer.email}
             onChange={(e) => onChange({ ...customer, email: e.target.value })}
-            style={{ marginLeft: '10px', padding: '5px', width: '300px' }}
+            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           />
         </label>
       </div>
-      <button
-        type='submit'
-        style={{
-          padding: '10px 20px',
-          backgroundColor: '#0070f3',
-          color: 'white',
-          border: 'none',
-          cursor: 'pointer',
-        }}
-      >
-        Save
-      </button>
+      <div className="flex justify-start">
+        <button
+          type="submit"
+          className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        >
+          Save
+        </button>
+      </div>
     </form>
   );
 };

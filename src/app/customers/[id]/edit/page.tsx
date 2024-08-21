@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { Customer } from '../../components/types';
 import { fetchCustomer, updateCustomer } from '../../components/customerUtils';
 import CustomerEditForm from '../../components/CustomerEditForm';
+import Layout from '@/components/layout';
+import ClipLoader from 'react-spinners/ClipLoader';
 
 const EditCustomerPage = ({ params }: { params: { id: string } }) => {
   const [customer, setCustomer] = useState<Customer | null>(null);
@@ -44,19 +46,23 @@ const EditCustomerPage = ({ params }: { params: { id: string } }) => {
     setCustomer(updatedCustomer);
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <Layout><div className="flex justify-center items-center h-screen">
+  <ClipLoader color={"#123abc"} loading={isLoading} size={50} />
+</div></Layout>;
   if (error) return <div>Error: {error}</div>;
   if (!customer) return <div>Customer not found</div>;
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>Edit Customer</h1>
-      <CustomerEditForm
-        customer={customer}
-        onChange={handleChange}
-        onSubmit={handleSubmit}
-      />
-    </div>
+    <Layout>
+      <div style={{ padding: '20px' }}>
+        <h1 className='text-2xl font-bold mb-4'>Edit Customer</h1>
+        <CustomerEditForm
+          customer={customer}
+          onChange={handleChange}
+          onSubmit={handleSubmit}
+        />
+      </div>
+    </Layout>
   );
 };
 

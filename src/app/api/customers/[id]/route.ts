@@ -5,13 +5,10 @@ export async function GET(
   request: Request,
   { params }: { params: { id: string } }
 ) {
-  console.log('API route called with ID:', params.id);
   try {
     const customer = await prisma.customer.findUnique({
       where: { id: params.id },
     });
-
-    console.log('Found customer:', customer);
 
     if (!customer) {
       return NextResponse.json(

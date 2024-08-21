@@ -96,7 +96,7 @@ const Dashboard: React.FC = () => {
     </div>
   );
 
-  if (isLoading) return <Layout>    <div className="flex justify-center items-center h-screen">
+  if (isLoading) return <Layout><div className="flex justify-center items-center h-screen">
   <ClipLoader color={"#123abc"} loading={isLoading} size={50} />
 </div></Layout>;
   if (!dashboardData) return <Layout><div className="flex justify-center items-center h-screen">No data available</div></Layout>;
