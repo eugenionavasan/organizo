@@ -1,12 +1,6 @@
-// Assure that you have the test user registered
-// E-mail: test@example.com
-// Password: test@example.com
-
-describe('Landing Page', () => {
+describe('Login Page', () => {
   beforeEach(() => {
-    cy.visit(
-      'https://romantic-hare-45.accounts.dev/sign-in?redirect_url=http%3A%2F%2Flocalhost%3A3000%2Flogin'
-    );
+    cy.visit('localhost:3000/login');
   });
 
   it('should display the email input field', () => {
