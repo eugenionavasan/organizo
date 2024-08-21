@@ -65,8 +65,29 @@ export const BookingForm: React.FC<BookingFormProps> = ({ date, time, onBooking,
         onBooking,
         resetForm
       );
+      // Sending confirmation email after booking is confirmed
+      try {
+        const response = await fetch('/api/sendConfirmationEmail', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name,
+            email,
+            date,
+            time,
+            service,
+          }),
+        });
+        if (!response.ok) {
+          throw new Error('Failed to send confirmation email');
+        }
+        console.log('Confirmation email sent successfully');
+      } catch (error) {
+        console.error('Error sending confirmation email:', error);
+      }
     }
-
     setIsProcessing(false);
   };
 
