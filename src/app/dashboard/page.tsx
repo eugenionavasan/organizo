@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Calendar, DollarSign, Users, Check, Clock, Star } from 'lucide-react';
 import Layout from '@/components/layout';
+import ClipLoader from 'react-spinners/ClipLoader';
 
 type TimePeriod = 'weekly' | 'monthly' | 'fourMonths' | 'yearly';
 
@@ -95,7 +96,9 @@ const Dashboard: React.FC = () => {
     </div>
   );
 
-  if (isLoading) return <Layout><div className="flex justify-center items-center h-screen">Loading...</div></Layout>;
+  if (isLoading) return <Layout>    <div className="flex justify-center items-center h-screen">
+  <ClipLoader color={"#123abc"} loading={isLoading} size={50} />
+</div></Layout>;
   if (!dashboardData) return <Layout><div className="flex justify-center items-center h-screen">No data available</div></Layout>;
 
   return (
