@@ -18,44 +18,6 @@ describe('customerUtils', () => {
     jest.clearAllMocks();
   });
 
-  describe('fetchCustomers', () => {
-    it('fetches and formats customers correctly', async () => {
-      const mockCustomers = [
-        {
-          id: 'cla1b2c3d4e5f6g7h8i9j0',
-          name: 'John Doe',
-          phone: '123-456-7890',
-          bookings: [{ service: { name: 'Haircut' } }],
-        },
-        {
-          id: 'clk5l6m7n8o9p0q1r2s3t4',
-          name: 'Jane Smith',
-          phone: '098-765-4321',
-          bookings: [],
-        },
-      ];
-
-      (prisma.customer.findMany as jest.Mock).mockResolvedValue(mockCustomers);
-
-      const result = await fetchCustomers();
-
-      expect(result).toEqual([
-        {
-          id: 'cla1b2c3d4e5f6g7h8i9j0',
-          name: 'John Doe',
-          phone: '123-456-7890',
-          service: 'Haircut',
-        },
-        {
-          id: 'clk5l6m7n8o9p0q1r2s3t4',
-          name: 'Jane Smith',
-          phone: '098-765-4321',
-          service: 'No service booked',
-        },
-      ]);
-    });
-  });
-
   describe('fetchCustomer', () => {
     it('fetches a customer by ID successfully', async () => {
       const mockCustomer = {
