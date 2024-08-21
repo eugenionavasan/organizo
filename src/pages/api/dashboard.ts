@@ -1,23 +1,14 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '@/lib/prisma';
-import { startOfMonth, format, addMonths, startOfDay } from 'date-fns';
+import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear, subMonths, format, addMonths, startOfDay, addWeeks } from 'date-fns';
 
-interface RevenueData {
-  month: Date;
-  amount: string | number;
+type TimePeriod = 'weekly' | 'monthly' | 'fourMonths' | 'yearly';
+
+interface DataPoint {
+  label: string;
+  value: number;
 }
 
-interface AppointmentData {
-  month: Date;
-  count: string | number;
-}
-
-interface PopularService {
-  name: string;
-  count: number;
-}
-
-// Helper function to safely convert BigInt to Number
 const safelyConvertBigInt = (value: any): number => {
   if (typeof value === 'bigint') {
     return Number(value);
@@ -28,8 +19,10 @@ const safelyConvertBigInt = (value: any): number => {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
     try {
-      const revenueData = await getRevenueData();
-      const appointmentsData = await getAppointmentsData();
+      const { revenuePeriod = 'fourMonths', appointmentsPeriod = 'fourMonths' } = req.query;
+
+      const revenueData = await getRevenueData(revenuePeriod as TimePeriod);
+      const appointmentsData = await getAppointmentsData(appointmentsPeriod as TimePeriod);
       const upcomingAppointments = await getUpcomingAppointments();
       const popularService = await getPopularService();
 
@@ -49,74 +42,99 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 }
 
-async function getRevenueData() {
-  try {
-    const today = new Date();
-    const currentMonth = startOfMonth(today);
-    const threeMonthsAhead = addMonths(currentMonth, 3);
+async function getRevenueData(period: TimePeriod): Promise<DataPoint[]> {
+  const { startDate, endDate, intervalString, formatString } = getDateRangeAndFormat(period);
 
-    const revenueData = await prisma.$queryRaw<RevenueData[]>`
-      SELECT 
-        DATE_TRUNC('month', series.month) as month,
-        COALESCE(SUM(s.price), 0) as amount
-      FROM 
-        generate_series(
-          ${currentMonth}::timestamp, 
-          ${threeMonthsAhead}::timestamp, 
-          '1 month'::interval
-        ) as series(month)
-      LEFT JOIN 
-        "Booking" b ON DATE_TRUNC('month', b."bookedTime") = DATE_TRUNC('month', series.month)
-      LEFT JOIN 
-        "Service" s ON b."serviceId" = s.id
-      GROUP BY 
-        DATE_TRUNC('month', series.month)
-      ORDER BY 
-        DATE_TRUNC('month', series.month) ASC
-    `;
+  const revenueData = await prisma.$queryRaw<{ date: Date; amount: bigint }[]>`
+    SELECT 
+      series.date,
+      COALESCE(SUM(s.price), 0) as amount
+    FROM 
+      generate_series(
+        ${startDate}::timestamp, 
+        ${endDate}::timestamp, 
+        ${`1 ${intervalString}`}::interval
+      ) as series(date)
+    LEFT JOIN 
+      "Booking" b ON DATE_TRUNC(${intervalString}, b."bookedTime") = DATE_TRUNC(${intervalString}, series.date)
+    LEFT JOIN 
+      "Service" s ON b."serviceId" = s.id
+    GROUP BY 
+      series.date
+    ORDER BY 
+      series.date ASC
+  `;
 
-    return revenueData.map((item) => ({
-      month: format(item.month, 'MMM'),
-      amount: safelyConvertBigInt(item.amount),
-    }));
-  } catch (error) {
-    console.error('Error in getRevenueData:', error);
-    throw error;
-  }
+  return revenueData.map((item) => ({
+    label: format(item.date, formatString),
+    value: safelyConvertBigInt(item.amount),
+  }));
 }
 
-async function getAppointmentsData() {
-  try {
-    const today = new Date();
-    const currentMonth = startOfMonth(today);
-    const threeMonthsAhead = addMonths(currentMonth, 3);
+async function getAppointmentsData(period: TimePeriod): Promise<DataPoint[]> {
+  const { startDate, endDate, intervalString, formatString } = getDateRangeAndFormat(period);
 
-    const appointmentsData = await prisma.$queryRaw<AppointmentData[]>`
-      SELECT 
-        DATE_TRUNC('month', series.month) as month,
-        COALESCE(COUNT(b.id), 0) as count
-      FROM 
-        generate_series(
-          ${currentMonth}::timestamp, 
-          ${threeMonthsAhead}::timestamp, 
-          '1 month'::interval
-        ) as series(month)
-      LEFT JOIN 
-        "Booking" b ON DATE_TRUNC('month', b."bookedTime") = DATE_TRUNC('month', series.month)
-      GROUP BY 
-        DATE_TRUNC('month', series.month)
-      ORDER BY 
-        DATE_TRUNC('month', series.month) ASC
-    `;
+  const appointmentsData = await prisma.$queryRaw<{ date: Date; count: bigint }[]>`
+    SELECT 
+      series.date,
+      COALESCE(COUNT(b.id), 0) as count
+    FROM 
+      generate_series(
+        ${startDate}::timestamp, 
+        ${endDate}::timestamp, 
+        ${`1 ${intervalString}`}::interval
+      ) as series(date)
+    LEFT JOIN 
+      "Booking" b ON DATE_TRUNC(${intervalString}, b."bookedTime") = DATE_TRUNC(${intervalString}, series.date)
+    GROUP BY 
+      series.date
+    ORDER BY 
+      series.date ASC
+  `;
 
-    return appointmentsData.map((item) => ({
-      month: format(item.month, 'MMM'),
-      count: safelyConvertBigInt(item.count),
-    }));
-  } catch (error) {
-    console.error('Error in getAppointmentsData:', error);
-    throw error;
+  return appointmentsData.map((item) => ({
+    label: format(item.date, formatString),
+    value: safelyConvertBigInt(item.count),
+  }));
+}
+
+function getDateRangeAndFormat(period: TimePeriod): { startDate: Date; endDate: Date; intervalString: string; formatString: string } {
+  const now = new Date();
+  let startDate: Date;
+  let endDate: Date;
+  let intervalString: string;
+  let formatString: string;
+
+  switch (period) {
+    case 'weekly':
+      startDate = startOfWeek(now);
+      endDate = addWeeks(startDate, 1);
+      intervalString = 'day';
+      formatString = 'EEE';
+      break;
+    case 'monthly':
+      startDate = startOfMonth(now);
+      endDate = endOfMonth(now);
+      intervalString = 'day';
+      formatString = 'dd';
+      break;
+    case 'fourMonths':
+      startDate = startOfMonth(now);
+      endDate = addMonths(startDate, 3);
+      intervalString = 'month';
+      formatString = 'MMM';
+      break;
+    case 'yearly':
+      startDate = startOfYear(now);
+      endDate = endOfYear(now);
+      intervalString = 'month';
+      formatString = 'MMM';
+      break;
+    default:
+      throw new Error('Invalid time period');
   }
+
+  return { startDate, endDate, intervalString, formatString };
 }
 
 async function getUpcomingAppointments() {
@@ -155,9 +173,9 @@ async function getUpcomingAppointments() {
   }
 }
 
-async function getPopularService(): Promise<PopularService> {
+async function getPopularService() {
   try {
-    const result = await prisma.$queryRaw<PopularService[]>`
+    const result = await prisma.$queryRaw<{ name: string; count: bigint }[]>`
       SELECT 
         s.name,
         COUNT(*) as count
