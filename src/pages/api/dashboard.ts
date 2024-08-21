@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '@/lib/prisma';
-import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear, subMonths, format, addMonths, startOfDay, addWeeks } from 'date-fns';
+import { startOfYear, endOfYear, startOfMonth, addMonths, format, subMonths, startOfWeek, endOfWeek } from 'date-fns';
 
 type TimePeriod = 'weekly' | 'monthly' | 'fourMonths' | 'yearly';
 
@@ -34,7 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
     } catch (error) {
       console.error('API Error:', error);
-      res.status(500).json({ error: 'An error occurred while fetching dashboard data'});
+      res.status(500).json({ error: 'An error occurred while fetching dashboard data' });
     }
   } else {
     res.setHeader('Allow', ['GET']);
@@ -45,25 +45,30 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 async function getRevenueData(period: TimePeriod): Promise<DataPoint[]> {
   const { startDate, endDate, intervalString, formatString } = getDateRangeAndFormat(period);
 
-  const revenueData = await prisma.$queryRaw<{ date: Date; amount: bigint }[]>`
+  const query = `
+    WITH date_series AS (
+      SELECT generate_series(
+        '${startDate.toISOString()}'::timestamp, 
+        '${endDate.toISOString()}'::timestamp,
+        '1 ${intervalString}'::interval
+      ) as date
+    )
     SELECT 
-      series.date,
+      DATE_TRUNC('${intervalString}', ds.date) as date,
       COALESCE(SUM(s.price), 0) as amount
     FROM 
-      generate_series(
-        ${startDate}::timestamp, 
-        ${endDate}::timestamp, 
-        ${`1 ${intervalString}`}::interval
-      ) as series(date)
+      date_series ds
     LEFT JOIN 
-      "Booking" b ON DATE_TRUNC(${intervalString}, b."bookedTime") = DATE_TRUNC(${intervalString}, series.date)
+      "Booking" b ON DATE_TRUNC('${intervalString}', b."bookedTime") = DATE_TRUNC('${intervalString}', ds.date)
     LEFT JOIN 
       "Service" s ON b."serviceId" = s.id
     GROUP BY 
-      series.date
+      DATE_TRUNC('${intervalString}', ds.date)
     ORDER BY 
-      series.date ASC
+      DATE_TRUNC('${intervalString}', ds.date) ASC
   `;
+
+  const revenueData = await prisma.$queryRawUnsafe<{ date: Date; amount: bigint }[]>(query);
 
   return revenueData.map((item) => ({
     label: format(item.date, formatString),
@@ -74,28 +79,66 @@ async function getRevenueData(period: TimePeriod): Promise<DataPoint[]> {
 async function getAppointmentsData(period: TimePeriod): Promise<DataPoint[]> {
   const { startDate, endDate, intervalString, formatString } = getDateRangeAndFormat(period);
 
-  const appointmentsData = await prisma.$queryRaw<{ date: Date; count: bigint }[]>`
+  const query = `
+    WITH date_series AS (
+      SELECT generate_series(
+        '${startDate.toISOString()}'::timestamp, 
+        '${endDate.toISOString()}'::timestamp,
+        '1 ${intervalString}'::interval
+      ) as date
+    )
     SELECT 
-      series.date,
+      DATE_TRUNC('${intervalString}', ds.date) as date,
       COALESCE(COUNT(b.id), 0) as count
     FROM 
-      generate_series(
-        ${startDate}::timestamp, 
-        ${endDate}::timestamp, 
-        ${`1 ${intervalString}`}::interval
-      ) as series(date)
+      date_series ds
     LEFT JOIN 
-      "Booking" b ON DATE_TRUNC(${intervalString}, b."bookedTime") = DATE_TRUNC(${intervalString}, series.date)
+      "Booking" b ON DATE_TRUNC('${intervalString}', b."bookedTime") = DATE_TRUNC('${intervalString}', ds.date)
     GROUP BY 
-      series.date
+      DATE_TRUNC('${intervalString}', ds.date)
     ORDER BY 
-      series.date ASC
+      DATE_TRUNC('${intervalString}', ds.date) ASC
   `;
+
+  const appointmentsData = await prisma.$queryRawUnsafe<{ date: Date; count: bigint }[]>(query);
 
   return appointmentsData.map((item) => ({
     label: format(item.date, formatString),
     value: safelyConvertBigInt(item.count),
   }));
+}
+
+async function getPopularService() {
+  try {
+    const query = `
+      SELECT 
+        s.name,
+        COUNT(*) as count
+      FROM 
+        "Booking" b
+      JOIN 
+        "Service" s ON b."serviceId" = s.id
+      GROUP BY 
+        s.id, s.name
+      ORDER BY 
+        count DESC
+      LIMIT 1
+    `;
+
+    const result = await prisma.$queryRawUnsafe<{ name: string; count: bigint }[]>(query);
+
+    if (result.length === 0) {
+      return { name: 'No services booked', count: 0 };
+    }
+
+    return {
+      name: result[0].name,
+      count: safelyConvertBigInt(result[0].count),
+    };
+  } catch (error) {
+    console.error('Error in getPopularService:', error);
+    throw error;
+  }
 }
 
 function getDateRangeAndFormat(period: TimePeriod): { startDate: Date; endDate: Date; intervalString: string; formatString: string } {
@@ -108,19 +151,19 @@ function getDateRangeAndFormat(period: TimePeriod): { startDate: Date; endDate: 
   switch (period) {
     case 'weekly':
       startDate = startOfWeek(now);
-      endDate = addWeeks(startDate, 1);
+      endDate = endOfWeek(now);
       intervalString = 'day';
       formatString = 'EEE';
       break;
     case 'monthly':
       startDate = startOfMonth(now);
-      endDate = endOfMonth(now);
+      endDate = addMonths(startDate, 1);
       intervalString = 'day';
       formatString = 'dd';
       break;
     case 'fourMonths':
       startDate = startOfMonth(now);
-      endDate = addMonths(startDate, 3);
+      endDate = addMonths(startDate, 4);
       intervalString = 'month';
       formatString = 'MMM';
       break;
@@ -145,8 +188,8 @@ async function getUpcomingAppointments() {
     const upcomingAppointments = await prisma.booking.findMany({
       where: {
         bookedTime: {
-          gte: startOfDay(today),
-          lt: startOfDay(threeMonthsAhead),
+          gte: today,
+          lt: threeMonthsAhead,
         },
       },
       include: {
@@ -156,7 +199,7 @@ async function getUpcomingAppointments() {
       orderBy: {
         bookedTime: 'asc',
       },
-      take: 5, // Limit to 5 upcoming appointments
+      take: 6, // Limit to 5 upcoming appointments
     });
 
     return upcomingAppointments.map((appointment) => ({
@@ -169,37 +212,6 @@ async function getUpcomingAppointments() {
     }));
   } catch (error) {
     console.error('Error in getUpcomingAppointments:', error);
-    throw error;
-  }
-}
-
-async function getPopularService() {
-  try {
-    const result = await prisma.$queryRaw<{ name: string; count: bigint }[]>`
-      SELECT 
-        s.name,
-        COUNT(*) as count
-      FROM 
-        "Booking" b
-      JOIN 
-        "Service" s ON b."serviceId" = s.id
-      GROUP BY 
-        s.id, s.name
-      ORDER BY 
-        count DESC
-      LIMIT 1
-    `;
-
-    if (result.length === 0) {
-      return { name: 'No services booked', count: 0 };
-    }
-
-    return {
-      name: result[0].name,
-      count: safelyConvertBigInt(result[0].count),
-    };
-  } catch (error) {
-    console.error('Error in getPopularService:', error);
     throw error;
   }
 }

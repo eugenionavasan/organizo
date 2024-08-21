@@ -45,20 +45,36 @@ const Dashboard: React.FC = () => {
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [revenuePeriod, setRevenuePeriod] = useState<TimePeriod>('fourMonths');
   const [appointmentsPeriod, setAppointmentsPeriod] = useState<TimePeriod>('fourMonths');
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const loadDashboardData = async () => {
+      setIsLoading(true);
       try {
         const data = await fetchDashboardData(revenuePeriod, appointmentsPeriod);
         setDashboardData(data);
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
     loadDashboardData();
   }, [revenuePeriod, appointmentsPeriod]);
 
-  if (!dashboardData) return <Layout><div>Loading...</div></Layout>;
+  const formatXAxisTick = (tickItem: string, period: TimePeriod) => {
+    switch (period) {
+      case 'weekly':
+        return tickItem.slice(0, 3);
+      case 'monthly':
+        return parseInt(tickItem, 10).toString();
+      case 'fourMonths':
+      case 'yearly':
+        return tickItem;
+      default:
+        return tickItem;
+    }
+  };
 
   const TimePeriodToggle: React.FC<{ 
     period: TimePeriod; 
@@ -73,11 +89,14 @@ const Dashboard: React.FC = () => {
           className={`px-2 py-1 mr-2 rounded ${period === p ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
           onClick={() => setPeriod(p as TimePeriod)}
         >
-          {p === 'fourMonths' ? '4 Months' : p.charAt(0).toUpperCase() + p.slice(1)}
+          {p === 'fourMonths' ? '5 months' : p.charAt(0).toUpperCase() + p.slice(1)}
         </button>
       ))}
     </div>
   );
+
+  if (isLoading) return <Layout><div className="flex justify-center items-center h-screen">Loading...</div></Layout>;
+  if (!dashboardData) return <Layout><div className="flex justify-center items-center h-screen">No data available</div></Layout>;
 
   return (
     <Layout>
@@ -94,7 +113,11 @@ const Dashboard: React.FC = () => {
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={dashboardData.revenue}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="label" />
+                    <XAxis 
+                      dataKey="label" 
+                      tickFormatter={(tick) => formatXAxisTick(tick, revenuePeriod)}
+                      interval={revenuePeriod === 'yearly' ? 0 : 'preserveStartEnd'}
+                    />
                     <YAxis />
                     <Tooltip />
                     <Bar dataKey="value" fill="#8884d8" />
@@ -112,7 +135,11 @@ const Dashboard: React.FC = () => {
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={dashboardData.appointments}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="label" />
+                    <XAxis 
+                      dataKey="label" 
+                      tickFormatter={(tick) => formatXAxisTick(tick, appointmentsPeriod)}
+                      interval={appointmentsPeriod === 'yearly' ? 0 : 'preserveStartEnd'}
+                    />
                     <YAxis />
                     <Tooltip />
                     <Bar dataKey="value" fill="#82ca9d" />
@@ -121,56 +148,56 @@ const Dashboard: React.FC = () => {
               </div>
             </div>
           </div>
-          
-          <div className="flex flex-col gap-6">
-            <div className="bg-white p-6 rounded-lg shadow-md flex-grow">
-              <h2 className="text-xl font-semibold mb-4 flex items-center">
-                <Calendar className="mr-2" /> Upcoming Appointments
-              </h2>
-              <ul className="space-y-4">
-                {dashboardData.upcomingAppointments.map((appointment) => (
-                  <li key={appointment.id} className="border-b pb-2">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <p className="font-semibold">{appointment.name}</p>
-                        <p className="text-sm text-gray-600">
-                          {appointment.date} at {appointment.time}
-                        </p>
-                        <p className="text-sm text-gray-600">{appointment.service}</p>
-                      </div>
-                      <div className={`px-2 py-1 rounded-full text-xs font-semibold flex items-center ${
-                        appointment.hasPaid ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                      }`}>
-                        {appointment.hasPaid ? (
-                          <>
-                            <Check size={12} className="mr-1" />
-                            Paid
-                          </>
-                        ) : (
-                          <>
-                            <Clock size={12} className="mr-1" />
-                            Pending
-                          </>
-                        )}
-                      </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
             
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h2 className="text-xl font-semibold mb-4 flex items-center">
-                <Star className="mr-2" /> Most Popular Service
-              </h2>
-              <div className="text-center">
-                <p className="text-3xl font-bold text-indigo-600">{dashboardData.popularService.name}</p>
-                <p className="text-lg text-gray-600 mt-2">Booked {dashboardData.popularService.count} times</p>
+            <div className="flex flex-col gap-6">
+              <div className="bg-white p-6 rounded-lg shadow-md flex-grow">
+                <h2 className="text-xl font-semibold mb-4 flex items-center">
+                  <Calendar className="mr-2" /> Upcoming Appointments
+                </h2>
+                <ul className="space-y-4">
+                  {dashboardData.upcomingAppointments.map((appointment) => (
+                    <li key={appointment.id} className="border-b pb-2">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-semibold">{appointment.name}</p>
+                          <p className="text-sm text-gray-600">
+                            {appointment.date} at {appointment.time}
+                          </p>
+                          <p className="text-sm text-gray-600">{appointment.service}</p>
+                        </div>
+                        <div className={`px-2 py-1 rounded-full text-xs font-semibold flex items-center ${
+                          appointment.hasPaid ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                        }`}>
+                          {appointment.hasPaid ? (
+                            <>
+                              <Check size={12} className="mr-1" />
+                              Paid
+                            </>
+                          ) : (
+                            <>
+                              <Clock size={12} className="mr-1" />
+                              Pending
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              
+              <div className="bg-white p-6 rounded-lg shadow-md">
+                <h2 className="text-xl font-semibold mb-4 flex items-center">
+                  <Star className="mr-2" /> Most Popular Service
+                </h2>
+                <div className="text-center">
+                  <p className="text-3xl font-bold text-indigo-600">{dashboardData.popularService.name}</p>
+                  <p className="text-lg text-gray-600 mt-2">Booked {dashboardData.popularService.count} times</p>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
     </Layout>
   );
 };
