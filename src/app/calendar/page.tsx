@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { usePathname } from 'next/navigation';
-import React, { useState } from 'react';
-import Layout from '../../components/layout';
+import { usePathname } from "next/navigation";
+import React, { useState } from "react";
+import Layout from "../../components/layout";
 
 type Event = {
   time: string;
@@ -11,12 +11,12 @@ type Event = {
 
 const mockEvents: { [key: number]: Event[] } = {
   1: [
-    { time: '9:30 AM', title: 'Booking 1' },
-    { time: '1:00 PM', title: 'Booking 2' },
+    { time: "9:30 AM", title: "Booking 1" },
+    { time: "1:00 PM", title: "Booking 2" },
   ],
-  4: [{ time: '8:00 AM', title: 'Booking 3' }],
-  5: [{ time: '2:00 PM', title: 'Booking 4' }],
-  10: [{ time: '10:30 AM', title: 'Booking 5' }],
+  4: [{ time: "8:00 AM", title: "Booking 3" }],
+  5: [{ time: "2:00 PM", title: "Booking 4" }],
+  10: [{ time: "10:30 AM", title: "Booking 5" }],
 };
 
 const getDaysInMonth = (month: number, year: number) => {
@@ -28,8 +28,8 @@ const Calendar: React.FC = () => {
   const [year, setYear] = useState<number>(new Date().getFullYear());
   const pathname = usePathname();
 
-  const handleMonthChange = (direction: 'prev' | 'next') => {
-    if (direction === 'prev') {
+  const handleMonthChange = (direction: "prev" | "next") => {
+    if (direction === "prev") {
       setMonth(month === 1 ? 12 : month - 1);
       if (month === 1) setYear(year - 1);
     } else {
@@ -42,15 +42,15 @@ const Calendar: React.FC = () => {
 
   return (
     <Layout>
-      <div className='flex'>
-        <main className='flex-1 p-4'>
+      <div className="flex ">
+        <main className="flex-1 p-4">
           <div style={styles.container}>
             <div style={styles.header}>
-              <button onClick={() => handleMonthChange('prev')}>‹</button>
-              <span>{`${new Date(year, month - 1).toLocaleString('default', {
-                month: 'long',
+              <button onClick={() => handleMonthChange("prev")}>‹</button>
+              <span>{`${new Date(year, month - 1).toLocaleString("default", {
+                month: "long",
               })} ${year}`}</span>
-              <button onClick={() => handleMonthChange('next')}>›</button>
+              <button onClick={() => handleMonthChange("next")}>›</button>
             </div>
             <div style={styles.list}>
               {Array.from({ length: daysInMonth }, (_, i) => i + 1).map(
@@ -81,50 +81,50 @@ export default Calendar;
 
 const styles = {
   container: {
-    display: 'flex',
-    flexDirection: 'column' as 'column',
-    alignItems: 'center',
-    padding: '20px',
-    fontFamily: 'Arial, sans-serif',
-    backgroundColor: '#f4f4f4',
-    width: '100%',
-    maxWidth: '600px',
-    margin: '0 auto',
+    display: "flex",
+    flexDirection: "column" as "column",
+    alignItems: "center",
+    padding: "20px",
+    fontFamily: "Arial, sans-serif",
+    backgroundColor: "#f4f4f4",
+    width: "100%",
+    maxWidth: "600px",
+    margin: "0 auto",
   },
   header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '100%',
-    marginBottom: '20px',
-    fontSize: '18px',
-    fontWeight: 'bold',
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+    marginBottom: "20px",
+    fontSize: "18px",
+    fontWeight: "bold",
   },
   list: {
-    width: '100%',
-    backgroundColor: '#fff',
-    borderRadius: '5px',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+    width: "100%",
+    backgroundColor: "#fff",
+    borderRadius: "5px",
+    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
   },
   dayRow: {
-    display: 'flex',
-    borderBottom: '1px solid #ddd',
-    padding: '10px 15px',
+    display: "flex",
+    borderBottom: "1px solid #ddd",
+    padding: "10px 15px",
   },
   dayNumber: {
-    fontWeight: 'bold',
-    marginRight: '15px',
+    fontWeight: "bold",
+    marginRight: "15px",
   },
   eventList: {
-    display: 'flex',
-    flexDirection: 'column' as 'column',
-    gap: '5px',
+    display: "flex",
+    flexDirection: "column" as "column",
+    gap: "5px",
   },
   event: {
-    backgroundColor: '#0070f3',
-    color: '#fff',
-    padding: '5px 10px',
-    borderRadius: '3px',
-    fontSize: '14px',
+    backgroundColor: "#0070f3",
+    color: "#fff",
+    padding: "5px 10px",
+    borderRadius: "3px",
+    fontSize: "14px",
   },
 };
