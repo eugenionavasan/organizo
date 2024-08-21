@@ -27,7 +27,7 @@ useEffect(() => {
       try {
         const response = await fetch(`/api/services/most-booked?period=${currentPeriod}`);
         const data = await response.json();
-        setMostPopularService(data[0]); // Assuming the first one is the most popular
+        setMostPopularService(data[0]); 
       } catch (error) {
         console.error('Error fetching most popular service:', error);
       }
