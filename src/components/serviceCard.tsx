@@ -2,6 +2,11 @@ import { useState, useEffect } from 'react';
 import { serviceData } from '../lib/mockData';
 
 const timePeriods = ['weekly', 'monthly', 'yearly'] as const;
+const displayNames = {
+    weekly: 'Week',
+    monthly: 'Month',
+    yearly: 'Year',
+  };
 
 interface ServiceCardProps {
   onClick: (period: 'weekly' | 'monthly' | 'yearly') => void;
@@ -46,7 +51,7 @@ useEffect(() => {
       onClick={handleClick}
       className="cursor-pointer p-6 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition-all"
     >
-      <p className="text-lg font-semibold">Most Booked {currentPeriod.charAt(0).toUpperCase() + currentPeriod.slice(1)}:</p>
+      <p className="text-lg font-semibold">Most Booked Service {currentPeriod.charAt(0).toUpperCase() + currentPeriod.slice(1)}:</p>
       <h2 className="text-2xl font-bold">{mostPopularService?.name || 'Loading...'}</h2>
     </div>
   );
