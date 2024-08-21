@@ -28,12 +28,10 @@ export const ProductShowcase = () => {
               <div className="tag">Boost your productivity</div>
             </div>
             <h2 className="section-title mt-5 ">
-              A more effective way to fill your calender
+              A more effective way to manage your business
             </h2>
             <p className="section-desciption mt-5">
-              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Rem.
-              Consequuntur blanditiis veritatis at dolore excepturi accusantium
-              reprehenderit saepe ad animi?
+            Experience our intuitive dashboard: revenue growth, upcoming appointments, most popular service. Running your business has never been this efficient or insightful.
             </p>
           </div>
           <div className="relative">

@@ -39,12 +39,10 @@ export const Hero = () => {
               Pathway to productivity
             </h1>
             <p className="text-xl text-[#010D3E] tracking-tight mt-6 ">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Corporis
-              distinctio est corrupti incidunt reiciendis. At voluptatum qui ea
-              placeat enim non!
+            Transform the way you manage your business with Organizo, the ultimate tool designed to simplify bookings, finances and productivity.
             </p>
             <div className="flex gap-1 items-center mt-[30px] ">
-              <button className="btn btn-primary">Get for free</button>
+              <button className="btn btn-primary">Get a free trial</button>
               <button className="btn btn-text">
                 <span>Learn more</span>
                 <ArrowRight className="h-5 w-5 gap-1" />

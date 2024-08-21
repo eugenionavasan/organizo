@@ -23,9 +23,7 @@ export const CallToAction = () => {
           <div className="section-heading relative">
             <h2 className="section-title">Try it for free today</h2>
             <p className="section-description mt-5">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam
-              ex tenetur possimus in blanditiis laborum ullam eos velit quia ad
-              maxime.
+            Ready to elevate your business? Try Organizo for free. Experience firsthand how our powerful tools can streamline your bookings and finances. Start your free trial today!
             </p>
             <motion.img
               src={starImage.src}
@@ -46,7 +44,7 @@ export const CallToAction = () => {
               }}
             />
             <div className="flex gap-2 mt-10 justify-center">
-              <button className="btn btn-primary">Try for free</button>
+              <button className="btn btn-primary">Get a free trial</button>
               <button className="btn btn-text gap-1">
                 <span>Learn more</span>
                 <ArrowRight className="w-5 h-5" />

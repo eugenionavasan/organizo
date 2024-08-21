@@ -33,7 +33,7 @@ export const Footer = () => {
           <SocialLinkin />
           <SocialPin />
         </div>
-        <p className="mt-6"> 2024 Organnizo, Inc. All right reserved</p>
+        <p className="mt-6"> 2024 Organizo, Inc. All right reserved</p>
       </footer>
     </>
   );
