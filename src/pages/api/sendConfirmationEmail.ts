@@ -9,6 +9,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         if (!name || !email || !date || !time || !service) {
             return res.status(400).json({ error: 'Missing required fields' });
         }
+        const formattedDate = new Date(date).toISOString().split('T')[0];
 
         // Transported object using SMTP server details
         const transporter = nodemailer.createTransport({
@@ -27,7 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             html: `<p>Dear ${name},</p>
                   <p>Thank you for your booking.</p>
                   <p><strong>Service:</strong> ${service}</p>
-                  <p><strong>Date:</strong> ${date}</p>
+                  <p><strong>Date:</strong> ${formattedDate}</p>
                   <p><strong>Time:</strong> ${time}</p>
                   <p>We look forward to serving you!</p>`,
         };
